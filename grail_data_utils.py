@@ -348,3 +348,121 @@ def read_vecs(file):
             i = i + 1
     return words_to_index, index_to_words, word_to_vec_map
 
+
+def plot_confusion_matrix(y_actu, y_pred, title='Confusion matrix', cmap=plt.cm.gray_r):
+    
+    df_confusion = pd.crosstab(y_actu, y_pred.reshape(y_pred.shape[0],), rownames=['Actual'], colnames=['Predicted'], margins=True)
+    
+    df_conf_norm = df_confusion / df_confusion.sum(axis=1)
+    
+    plt.matshow(df_confusion, cmap=cmap) # imshow
+    #plt.title(title)
+    plt.colorbar()
+    tick_marks = np.arange(len(df_confusion.columns))
+    plt.xticks(tick_marks, df_confusion.columns, rotation=45)
+    plt.yticks(tick_marks, df_confusion.index)
+    #plt.tight_layout()
+    plt.ylabel(df_confusion.index.name)
+    plt.xlabel(df_confusion.columns.name)
+
+def tag_sequence(sentence, model, wmap, imap):
+    list = sentence.strip().split()
+    arr = np.array([list])
+    indices = lists_to_indices(arr, wmap, max_len = maxLen, normalize=True)
+    pred = model.predict(indices)
+    for j in range(len(list)):
+        num = np.argmax(pred[0][j])        
+        print(list[j] + '|' + imap[num], end=' ')
+
+
+def print_tagged(X, model, wmap, imap, maxLen):
+
+    Xi = lists_to_indices(X, wmap, maxLen)
+    pred = model.predict(Xi) 
+    
+    for i in range(len(X)-1):
+        for j in range(len(X[i])):
+            num = np.argmax(pred[i][j])
+            print(X[i][j] + '|' + imap[num], end = ' ')
+        print()
+
+def print_tagged_beta(X, model, beta, wmap, imap, maxLen):
+
+    Xi = lists_to_indices(X, wmap, maxLen)
+    pred = model.predict(Xi) 
+    
+    for i in range(len(X)-1):
+        for j in range(len(X[i])):
+            tags = predict_beta(pred[i][j],beta)
+            print(X[i][j], end = '')
+            print('|', end='')
+            print(len(tags), end='')
+            for key,value in tags.items():
+                print('|', end='')
+                print(imap[key], end='')
+                print('|', end='')
+                print(value, end='')
+            print(' ', end='')    
+        print()
+
+# returns set with integer indices of all solutions with probability
+# greater than or equal to beta time the probability assigned to the
+# best solution
+        
+def predict_beta_set(vec,beta):
+    tags = set()
+    maxp = np.max(vec)
+    bm = maxp * beta
+    for k in range(len(vec)):
+        kprob = vec[k]
+        if (kprob >= bm):
+            tags.add(k)
+    return tags
+
+def predict_beta(vec,beta):
+    tags = {}
+    maxp = np.max(vec)
+    bm = maxp * beta
+    for k in range(len(vec)):
+        kprob = vec[k]
+        if (kprob >= bm):
+            tags[k] = kprob
+    return tags
+
+# This code allows you to see the mislabelled examples
+
+def eval_beta(X_dev, Y_dev, model, wmap, imap, iimap, beta):
+    correct = 0
+    wrong = 0
+    totalpreds = 0
+
+    Xi = lists_to_indices(X_dev, wmap, maxLen)
+    Y_dev_indices = lists_to_indices(Y_dev, imap, max_len = maxLen)
+    pred = model.predict(Xi)
+    
+    for i in range(len(X_dev)-1):
+        for j in range(len(X_dev[i])):
+            numset = predict_beta_set(pred[i][j], beta)
+            totalpreds = totalpreds + len(numset)
+            if not (Y_dev_indices[i][j] in numset):
+                wrong = wrong + 1
+                print('Expected tag: '+ X_dev[i][j] + '|' + Y_dev[i][j] + ' prediction: '+ X_dev[i][j],end='')
+#                print(numset)
+                for pi in numset:
+                    print('|' + iimap[pi], end='')
+                print()
+            else:
+                correct = correct + 1
+    total = wrong + correct
+    print("Total  : ", total)
+    print("Correct: ", correct)
+    print("Wrong  : ", wrong)
+
+    cpct = (100*correct)/total
+    wpct = (100*wrong)/total
+    print("Correct %: ", cpct)
+    print("Wrong   %: ", wpct)
+    
+    avpreds = totalpreds/total
+    print("Average predictions : ", avpreds)
+
