@@ -1,3 +1,8 @@
+import matplotlib.pyplot as plt
+import numpy as npy
+import re
+
+
 # normalizes word according to the conventions of fastText; only transforms the word to lower case
 
 def normalize_word(orig_word):
@@ -59,10 +64,10 @@ def read_maxentdata(file):
             postags2 = []
             supertags = []
             
-        X = np.asarray(allwords)
-        Y1 = np.asarray(allpos1)
-        Y2 = np.asarray(allpos2)
-        Z = np.asarray(allsuper)
+        X = npy.asarray(allwords)
+        Y1 = npy.asarray(allpos1)
+        Y2 = npy.asarray(allpos2)
+        Z = npy.asarray(allsuper)
         return X, Y1, Y2, Z, vocabulary, vnorm, partsofspeech1, partsofspeech2, superset, maxlen
 
 
@@ -85,9 +90,9 @@ def indexify (set):
 def is_numeral (string):
     return re.match(r'\A\-?\d[\d\.\,-/]*\Z', string) is not None
 
-def num_to_vec (ns):
-    vecsize = np.size(number["0"])
-    avg = np.zeros(vecsize)
+def num_to_vec (ns, number):
+    vecsize = npy.size(number["0"])
+    avg = npy.zeros(vecsize)
 
     cl = list(ns)
     i = 0
@@ -110,9 +115,11 @@ def read_suffixes(file):
 
     return suffixes
 
+french_suffixes = read_suffixes('suffixes.txt')
+
 def suffix_vector(word, suffixes=french_suffixes):
     length = len(suffixes)+1
-    vector = np.zeros(length)
+    vector = npy.zeros(length)
     for suf,num in suffixes.items():
         if word.endswith(suf):
             vector[num] = 1.0
@@ -125,6 +132,8 @@ french_prepositions = set(['à', 'après', 'avant', 'avec', 'chez', 'contre', 'd
 french_whq_words = set(['qui', 'que', "qu'", 'comment', 'combien', 'auquel', 'auxquels', 'auxquelles', 'duquel', 'desquels', 'desquelles','quel', 'quelle', 'quels', 'quelles', 'quand', 'où', 'pourquoi'])
 
 french_definite_articles = set(['le', 'la', 'les', "l'", 'du', 'des', 'au', 'aux'])
+
+french_possessive_articles = set(['mon', 'ma', 'mes', 'ton', 'ta', 'tes', 'son', 'sa', 'ses', 'nos', 'vos', 'leurs'])
 
 french_indefinite_articles = set(['un', 'une'])
 
@@ -153,6 +162,19 @@ avoir_forms = set(['ai', 'as', 'a', 'avons', 'avez', 'ont', \
                   'eusse', 'eusses', 'eût', 'eussions', 'eussiez', 'eussent', \
                   'aurais', 'aurait', 'aurions', 'auriez', 'auraient', \
                    'eu'])
+
+
+
+frequent_words = set(['en', 'pour', 'par', 'qui', 'dans', '%', 'sur', 'plus', '-', 'pas', 'son', 'avec',\
+                      'M.', 'francs', 'ses', 'cette', 'leur', 'comme', 'mais', 'pays', 'année', 'même', 'sa', 'ans', 'France', 'y', 'entre',\
+                      'dont', 'fait', 'mois', 'groupe', 'depuis', 'marché', 'leurs', 'ces', 'aussi', 'très', 'sans', 'tout', 'prix', 'taux',\
+                      'où', 'bien', 'après', 'moins', 'encore', 'contre', 'premier', 'autres', 'entreprises', 'faire', '?', ';', 'soit', 'peu',\
+                      'an', 'temps', 'fin', 'pour', 'alors', 'années', 'ainsi', 'lui', 'tous', 'autre', 'peut', 'avant', 'selon', 'fois', 'déjà',\
+                      'part', 'donc', 'quelques', 'sous', 'non', 'et', 'notre', 'devrait', 'cas', 'près', 'celui', 'va', 'pourrait', "aujourd'hui",\
+                      'effet', 'nombre', 'doit', 'étaient', 'toujours', 'vers', 'environ', 'faut', 'ceux', 'devant', 'surtout', 'autant', 'lors',\
+                      'pouvoir', 'ailleurs', 'chaque', 'vie', 'raison', 'seulement', 'mis', 'aura', 'moment', 'nos', 'durée', 'aurait', 'partir',\
+                      'conseil', 'ancien', 'dès', 'certains', 'chez', 'ici', 'moyenne', 'doute', 'nouvelles', 'ici', 'demande', 'lieu', 'pendant',\
+                      'puis', 'jamais', 'cela', 'total', 'là', 'désormais', 'afin'])
 
 def word_features(word, unknown=False):
     lcword = word.lower()
@@ -212,6 +234,21 @@ def word_features(word, unknown=False):
          list.append(1.0)
     else:
         list.append(0.0)
+    # word is form a "ce"    
+    if (lcword == "ce") or (lcword == "c'"):
+         list.append(1.0)
+    else:
+        list.append(0.0)
+    # word is form a "ne"    
+    if (lcword == "ne") or (lcword == "n'"):
+         list.append(1.0)
+    else:
+        list.append(0.0)
+    # word is form a "jusque"    
+    if (lcword == "jusque") or (lcword == "jusqu'"):
+         list.append(1.0)
+    else:
+        list.append(0.0)
     if (lcword in etre_forms):
          list.append(1.0)
     else:
@@ -229,6 +266,10 @@ def word_features(word, unknown=False):
     else:
         list.append(0.0)
     if (lcword in french_definite_articles):
+         list.append(1.0)
+    else:
+        list.append(0.0)
+    if (lcword in french_possessive_articles):
          list.append(1.0)
     else:
         list.append(0.0)
@@ -268,18 +309,35 @@ def word_features(word, unknown=False):
     if (lcword == "de") or (lcword == "d'") or (lcword == "du"):
          list.append(1.0)
     else:
-        list.append(0.0)        
+        list.append(0.0)
+    for w in frequent_words:
+        if (w == lcword):
+            list.append(1.0)
+        else:
+            list.append(0.0)
+                     
     # word is unknown by the embedding    
     if unknown:
          list.append(1.0)
     else:
         list.append(0.0)
     
-    ar = np.asarray(list)
+    ar = npy.asarray(list)
     return ar
 
 
-def read_vecs(file):
+def read_vecs(file, vnorm, vocabulary):
+
+    # fastText does not include native numbers; internally, these are translated into sequences of the words "zéro", "un", etc.
+    # We add new entries averaging over the number symbols for numbers appearing in the French Treebank.
+    with open("num_vec.txt", 'r') as f:
+        number = {}
+        for line in f:
+            line = line.strip().split()
+            numc = line[0]
+            emb = npy.array(line[1:], dtype=npy.float64)
+            number[numc] = emb
+        
     with open(file, 'r') as f:
         words = set()
         vocabn = vnorm
@@ -292,10 +350,10 @@ def read_vecs(file):
             if is_numeral(w):
                 numset.add(w)
                 words.add(w)
-                emb = num_to_vec(w)
+                emb = num_to_vec(w, number)
                 features = word_features(w)
                 suf = suffix_vector(w)
-                word_to_vec_map[w] = np.concatenate((emb,suf,features))
+                word_to_vec_map[w] = npy.concatenate((emb,suf,features))
         vocabn = vocabn.difference(numset)
         vocab = vocab.difference(numset)
         for line in f:
@@ -305,27 +363,27 @@ def read_vecs(file):
                 vocabn.remove(curr_word)
                 vocab.discard(curr_word)
                 words.add(curr_word)                
-                emb = np.array(line[1:], dtype=np.float64)
-                emsize = np.size(emb)
+                emb = npy.array(line[1:], dtype=npy.float64)
+                emsize = npy.size(emb)
                 features = word_features(curr_word)
                 suf = suffix_vector(curr_word)
-                word_to_vec_map[curr_word] = np.concatenate((emb,suf,features))
+                word_to_vec_map[curr_word] = npy.concatenate((emb,suf,features))
 
         for w in vocab:
             words.add(w)
             wn = normalize_word(w)
-            emb = np.zeros(emsize)
+            emb = npy.zeros(emsize)
             suf = suffix_vector(wn)
             try:
                 vec = word_to_vec_map[wn]
             except:  
                 print(w)
                 features = word_features(w, unknown=True)
-                word_to_vec_map[w] = np.concatenate((emb,suf,features))
+                word_to_vec_map[w] = npy.concatenate((emb,suf,features))
             else:
                 emb = vec[0:emsize]
                 features = word_features(w)
-                word_to_vec_map[w] = np.concatenate((emb,suf,features))
+                word_to_vec_map[w] = npy.concatenate((emb,suf,features))
 
         for w in vocabn:
             words.add(w)
@@ -334,9 +392,9 @@ def read_vecs(file):
             except:  
                 print(w)
                 features = word_features(w, unknown=True)
-                emb = np.zeros(emsize)
+                emb = npy.zeros(emsize)
                 suf = suffix_vector(w)
-                word_to_vec_map[w] = np.concatenate((emb,suf,features))
+                word_to_vec_map[w] = npy.concatenate((emb,suf,features))
         
                 
         i = 2  # keep 1 for unknown
@@ -354,7 +412,7 @@ def lists_to_indices(X, item_to_index, max_len, normalize=False):
     m = X.shape[0]                                   # number of training examples
     
     # Initialize X_indices as a numpy matrix of zeros and the correct shape (≈ 1 line)
-    X_indices = np.zeros((m,max_len))
+    X_indices = npy.zeros((m,max_len))
 
     for i in range(m):                               # loop over training examples
         
@@ -398,7 +456,7 @@ def sentences_to_indices(X, word_to_index, max_len):
     
     ### START CODE HERE ###
     # Initialize X_indices as a numpy matrix of zeros and the correct shape (≈ 1 line)
-    X_indices = np.zeros((m,max_len))
+    X_indices = npy.zeros((m,max_len))
     
     for i in range(m):                               # loop over training examples
         
@@ -434,7 +492,7 @@ def plot_confusion_matrix(y_actu, y_pred, title='Confusion matrix', cmap=plt.cm.
     plt.matshow(df_confusion, cmap=cmap) # imshow
     #plt.title(title)
     plt.colorbar()
-    tick_marks = np.arange(len(df_confusion.columns))
+    tick_marks = npy.arange(len(df_confusion.columns))
     plt.xticks(tick_marks, df_confusion.columns, rotation=45)
     plt.yticks(tick_marks, df_confusion.index)
     #plt.tight_layout()
@@ -443,11 +501,11 @@ def plot_confusion_matrix(y_actu, y_pred, title='Confusion matrix', cmap=plt.cm.
 
 def tag_sequence(sentence, model, wmap, imap):
     list = sentence.strip().split()
-    arr = np.array([list])
+    arr = npy.array([list])
     indices = lists_to_indices(arr, wmap, max_len = maxLen, normalize=True)
     pred = model.predict(indices)
     for j in range(len(list)):
-        num = np.argmax(pred[0][j])        
+        num = npy.argmax(pred[0][j])        
         print(list[j] + '|' + imap[num], end=' ')
 
 
@@ -458,7 +516,7 @@ def print_tagged(X, model, wmap, imap, maxLen):
     
     for i in range(len(X)-1):
         for j in range(len(X[i])):
-            num = np.argmax(pred[i][j])
+            num = npy.argmax(pred[i][j])
             print(X[i][j] + '|' + imap[num], end = ' ')
         print()
 
@@ -487,7 +545,7 @@ def print_tagged_beta(X, model, beta, wmap, imap, maxLen):
         
 def predict_beta_set(vec,beta):
     tags = set()
-    maxp = np.max(vec)
+    maxp = npy.max(vec)
     bm = maxp * beta
     for k in range(len(vec)):
         kprob = vec[k]
@@ -497,7 +555,7 @@ def predict_beta_set(vec,beta):
 
 def predict_beta(vec,beta):
     tags = {}
-    maxp = np.max(vec)
+    maxp = npy.max(vec)
     bm = maxp * beta
     for k in range(len(vec)):
         kprob = vec[k]
