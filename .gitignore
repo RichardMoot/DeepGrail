@@ -1,6 +1,10 @@
+# ignore automatically generate auxiliary files
 vectors.txt
 vocab.txt
+# ignore emacs backoups
 *~
+# ignore saved models
+*.h5
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
