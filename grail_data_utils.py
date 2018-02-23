@@ -141,9 +141,12 @@ french_nominative_pronouns = set(['je', "j'", 'on', 'tu', "t'", 'il', 'elle', 'n
                                  '-t-il', '-t-ils', '-t-elle', '-t-elles', '-t-on', \
                                  '-je', '-tu', '-elle', '-il', '-on', '-nous', '-vous', '-ils', '-elles' ])
 
-french_accusative_pronouns = set(['me', "m'", 'te', "t'", 'toi', 'le', 'la', "l'", 'lui', 'nous', 'vous', 'les', 'elles'])
+french_accusative_pronouns = set(['me', "m'", "-m'", '-moi', 'te', "t'", 'toi', '-toi', 'le', '-le', 'la', '-la', "l'", 'lui', '-lui',\
+                                  'nous', '-nous', 'vous', '-vous', 'les', '-les', 'elles'])
 
 french_reflexives = set(['se', "s'", 'me', "m'", 'te', "t'", 'toi', "nous", "vous"])
+
+# all inflected forms of "être"
 
 etre_forms = set(['suis', 'es', 'est', 'sommes', 'êtes', 'sont', \
                  'fus', 'fut', 'fûmes', 'fûtes', 'furent', \
@@ -154,6 +157,8 @@ etre_forms = set(['suis', 'es', 'est', 'sommes', 'êtes', 'sont', \
                  'serais', 'serait', 'serions', 'seriez', 'seraient', \
                  'été'])
 
+# all inflected forms of "avoir"
+
 avoir_forms = set(['ai', 'as', 'a', 'avons', 'avez', 'ont', \
                   'eus', 'eut', 'eûmes', 'eûtes', 'eurent', \
                   'avais', 'avait', 'avions', 'aviez', 'avaient', \
@@ -163,10 +168,28 @@ avoir_forms = set(['ai', 'as', 'a', 'avons', 'avez', 'ont', \
                   'aurais', 'aurait', 'aurions', 'auriez', 'auraient', \
                    'eu'])
 
+# past participles taking "être" as auxiliary verb
 
-
-frequent_words = set(['en', 'pour', 'par', 'qui', 'dans', '%', 'sur', 'plus', '-', 'pas', 'son', 'avec',\
-                      'M.', 'francs', 'ses', 'cette', 'leur', 'comme', 'mais', 'pays', 'année', 'même', 'sa', 'ans', 'France', 'y', 'entre',\
+etre_past_participles = set(['allé', 'allée', 'allés', 'allées',\
+                             'arrivé', 'arrivée', 'arrivés', 'arrivées',\
+                             'descendu', 'descendue', 'descendus', 'descendues',\
+                             'entré', 'entrée', 'entrés', 'entrées',\
+                             'monté', 'montée', 'montés', 'montées',\
+                             'mort', 'morte', 'morts', 'mortes',\
+                             'né', 'née', 'nés', 'nées',\
+                             'parti', 'partie', 'partis', 'parties',\
+                             'passé', 'passée', 'passés', 'passées',\
+                             'resté', 'restée', 'restés', 'restées',\
+                             'retourné', 'retournée', 'retournés', 'retournées',\
+                             'sorti', 'sortie', 'sortis', 'sorties',\
+                             'tombé', 'tombée', 'tombés', 'tombées',\
+                             'venu', 'venue', 'venus', 'venues',\
+                             'devenu', 'devenue', 'devenus', 'devenues',\
+                             'revenu', 'revenue', 'revenus', 'revenues'])
+                             
+                             
+frequent_words = set(['pour', 'par', 'qui', 'dans', '%', 'sur', 'plus', '-', 'pas', 'son', 'avec',\
+                      'M.', 'francs', 'ses', 'cette', 'leur', 'comme', 'mais', 'pays', 'année', 'même', 'sa', 'ans', 'France', 'entre',\
                       'dont', 'fait', 'mois', 'groupe', 'depuis', 'marché', 'leurs', 'ces', 'aussi', 'très', 'sans', 'tout', 'prix', 'taux',\
                       'où', 'bien', 'après', 'moins', 'encore', 'contre', 'premier', 'autres', 'entreprises', 'faire', '?', ';', 'soit', 'peu',\
                       'an', 'temps', 'fin', 'pour', 'alors', 'années', 'ainsi', 'lui', 'tous', 'autre', 'peut', 'avant', 'selon', 'fois', 'déjà',\
@@ -174,7 +197,7 @@ frequent_words = set(['en', 'pour', 'par', 'qui', 'dans', '%', 'sur', 'plus', '-
                       'effet', 'nombre', 'doit', 'étaient', 'toujours', 'vers', 'environ', 'faut', 'ceux', 'devant', 'surtout', 'autant', 'lors',\
                       'pouvoir', 'ailleurs', 'chaque', 'vie', 'raison', 'seulement', 'mis', 'aura', 'moment', 'nos', 'durée', 'aurait', 'partir',\
                       'conseil', 'ancien', 'dès', 'certains', 'chez', 'ici', 'moyenne', 'doute', 'nouvelles', 'ici', 'demande', 'lieu', 'pendant',\
-                      'puis', 'jamais', 'cela', 'total', 'là', 'désormais', 'afin'])
+                      'puis', 'jamais', 'cela', 'total', 'désormais', 'afin'])
 
 def word_features(word, unknown=False):
     lcword = word.lower()
@@ -234,8 +257,23 @@ def word_features(word, unknown=False):
          list.append(1.0)
     else:
         list.append(0.0)
+    # word is form a "en"    
+    if (lcword == "-t-en") or (lcword == "-en") or (lcword == "en"):
+         list.append(1.0)
+    else:
+        list.append(0.0)
     # word is form a "ce"    
-    if (lcword == "ce") or (lcword == "c'"):
+    if (lcword == "-ce") or (lcword == "ce") or (lcword == "c'"):
+         list.append(1.0)
+    else:
+        list.append(0.0)
+    # word is form a "y"    
+    if (lcword == "-t-y") or (lcword == "-y") or (lcword == "y"):
+         list.append(1.0)
+    else:
+        list.append(0.0)
+    # word is form a "là"    
+    if (lcword == "-là") or (lcword == "là"):
          list.append(1.0)
     else:
         list.append(0.0)
@@ -250,6 +288,10 @@ def word_features(word, unknown=False):
     else:
         list.append(0.0)
     if (lcword in etre_forms):
+         list.append(1.0)
+    else:
+        list.append(0.0)
+    if (lcword in etre_past_participles):
          list.append(1.0)
     else:
         list.append(0.0)
@@ -499,7 +541,7 @@ def plot_confusion_matrix(y_actu, y_pred, title='Confusion matrix', cmap=plt.cm.
     plt.ylabel(df_confusion.index.name)
     plt.xlabel(df_confusion.columns.name)
 
-def tag_sequence(sentence, model, wmap, imap):
+def tag_sequence(sentence, model, wmap, imap, maxLen):
     list = sentence.strip().split()
     arr = npy.array([list])
     indices = lists_to_indices(arr, wmap, max_len = maxLen, normalize=True)
@@ -565,7 +607,7 @@ def predict_beta(vec,beta):
 
 # This code allows you to see the mislabelled examples
 
-def eval_beta(X_dev, Y_dev, model, wmap, imap, iimap, beta):
+def eval_beta(X_dev, Y_dev, model, wmap, imap, iimap, beta, maxLen):
     correct = 0
     wrong = 0
     totalpreds = 0
