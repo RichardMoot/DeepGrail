@@ -1,6 +1,7 @@
 # ignore automatically generate auxiliary files
 vectors.txt
 vocab.txt
+lefff-ext-3.0.txt
 # ignore emacs backoups
 *~
 # ignore saved models
