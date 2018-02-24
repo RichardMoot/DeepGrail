@@ -71,7 +71,7 @@ def read_maxentdata(file):
         return X, Y1, Y2, Z, vocabulary, vnorm, partsofspeech1, partsofspeech2, superset, maxlen
 
 
-    # create a bi-directional mapping (using two dictionaries) translating elements of a set to and from integers
+# create a bi-directional mapping (using two dictionaries) translating elements of a set to and from integers
 
 def indexify (set):
     i = 1
@@ -84,7 +84,6 @@ def indexify (set):
         i = i + 1
 
     return item_to_index, index_to_item
-
 
 
 def is_numeral (string):
