@@ -132,9 +132,21 @@ french_whq_words = set(['qui', 'que', "qu'", 'comment', 'combien', 'auquel', 'au
 
 french_definite_articles = set(['le', 'la', 'les', "l'", 'du', 'des', 'au', 'aux'])
 
-french_possessive_articles = set(['mon', 'ma', 'mes', 'ton', 'ta', 'tes', 'son', 'sa', 'ses', 'nos', 'vos', 'leurs'])
+french_possessive_articles = set(['mon', 'ma', 'mes', 'ton', 'ta', 'tes', 'son', 'sa', 'ses', 'notre', 'nos', 'votre', 'vos', 'leurs'])
 
 french_indefinite_articles = set(['un', 'une'])
+
+french_determiners =\
+    set(['aucun', 'aucune', 'certaines', 'certains', 'plusieurs',\
+         'quelque', "quelqu'", 'quelques',\
+         'ladite', 'ledit', 'lesdits', 'lesdites', 'maint', 'maintes',\
+         'tout', 'toute', 'tous', 'toutes',\
+         'ma', 'mon', 'mes', 'ta', 'ton', 'tes', 'sa', 'son', 'ses',\
+         'notre', 'nos', 'votre', 'vos', 'leur', 'leurs',\
+         'un', 'une',\
+         'ce', 'ces', 'cet',  'cette',\
+         "l'", 'la', 'le', 'les', 'chaque', "d'", 'de', 'des',\
+         'du', 'des', 'au', 'aux'])
 
 french_nominative_pronouns = set(['je', "j'", 'on', 'tu', "t'", 'il', 'elle', 'nous', 'vous', 'ils', 'elles',\
                                  '-t-il', '-t-ils', '-t-elle', '-t-elles', '-t-on', \
@@ -187,13 +199,16 @@ etre_past_participles = set(['allé', 'allée', 'allés', 'allées',\
                              'revenu', 'revenue', 'revenus', 'revenues'])
                              
                              
-frequent_words = set(['pour', 'par', 'qui', 'dans', '%', 'sur', 'plus', '-', 'pas', 'son', 'avec',\
-                      'M.', 'francs', 'ses', 'cette', 'leur', 'comme', 'mais', 'pays', 'année', 'même', 'sa', 'ans', 'France', 'entre',\
-                      'dont', 'fait', 'mois', 'groupe', 'depuis', 'marché', 'leurs', 'ces', 'aussi', 'très', 'sans', 'tout', 'prix', 'taux',\
+frequent_words = set([',', '-', ':', ';', '.', '?', '!', '...', '(', ')', '+',\
+                      'face', 'affaire', 'assistance', 'audience', 'avis'\
+                      'par', 'qui', 'dans', 'en', '%', 'sur', 'plus', '-',\
+                      'pas', 'son', 'avec', 'beaucoup', 'confiance'\
+                      'francs', 'ses', 'leur', 'comme', 'mais', 'pays', 'année', 'même', 'sa', 'ans', 'France', 'entre',\
+                      'dont', 'fait', 'mois', 'groupe', 'depuis', 'marché', 'leurs', 'aussi', 'très', 'sans', 'tout', 'toute', 'toutes',  'prix', 'taux',\
                       'où', 'bien', 'après', 'moins', 'encore', 'contre', 'premier', 'autres', 'entreprises', 'faire', '?', ';', 'soit', 'peu',\
-                      'an', 'temps', 'fin', 'pour', 'alors', 'années', 'ainsi', 'lui', 'tous', 'autre', 'peut', 'avant', 'selon', 'fois', 'déjà',\
-                      'part', 'donc', 'quelques', 'sous', 'non', 'et', 'notre', 'devrait', 'cas', 'près', 'celui', 'va', 'pourrait', "aujourd'hui",\
-                      'effet', 'nombre', 'doit', 'étaient', 'toujours', 'vers', 'environ', 'faut', 'ceux', 'devant', 'surtout', 'autant', 'lors',\
+                      'an', 'temps', 'fin', 'début', 'pour', 'alors', 'années', 'ainsi', 'lui', 'tous', 'autre', 'peut', 'avant', 'selon', 'fois', 'déjà',\
+                      'part', 'donc', 'quelques', 'sous', 'non', 'et', 'notre', 'devrait', 'cas', 'près', 'va', 'pourrait', "aujourd'hui",\
+                      'effet', 'nombre', 'doit', 'étaient', 'toujours', 'vers', 'environ', 'faut', 'devant', 'surtout', 'autant', 'lors',\
                       'pouvoir', 'ailleurs', 'chaque', 'vie', 'raison', 'seulement', 'mis', 'aura', 'moment', 'nos', 'durée', 'aurait', 'partir',\
                       'conseil', 'ancien', 'dès', 'certains', 'chez', 'ici', 'moyenne', 'doute', 'nouvelles', 'ici', 'demande', 'lieu', 'pendant',\
                       'puis', 'jamais', 'cela', 'total', 'désormais', 'afin'])
@@ -258,97 +273,117 @@ def word_features(word, unknown=False):
         list.append(0.0)
     # word is form a "en"    
     if (lcword == "-t-en") or (lcword == "-en") or (lcword == "en"):
-         list.append(1.0)
+        list.append(1.0)
     else:
         list.append(0.0)
-    # word is form a "ce"    
+    # word is form a pronous "ce"    
     if (lcword == "-ce") or (lcword == "ce") or (lcword == "c'"):
-         list.append(1.0)
+        list.append(1.0)
+    else:
+        list.append(0.0)
+    # word is form a determiner "ce"    
+    if (lcword == "ces") or (lcword == "cette") or (lcword == "ce") or (lcword == "cet"):
+        list.append(1.0)
+    else:
+        list.append(0.0)
+    # word is form a demonstrative pronoun    
+    if (lcword == "celle") or (lcword == "celui") or (lcword == "cela") or (lcword == "ceux"):
+        list.append(1.0)
     else:
         list.append(0.0)
     # word is form a "y"    
     if (lcword == "-t-y") or (lcword == "-y") or (lcword == "y"):
-         list.append(1.0)
+        list.append(1.0)
     else:
         list.append(0.0)
     # word is form a "là"    
     if (lcword == "-là") or (lcword == "là"):
-         list.append(1.0)
+        list.append(1.0)
+    else:
+        list.append(0.0)
+    # word is form a "à"    
+    if (word == "A") or (lcword == "à") or (lcword == "au") or (lcword == "aux"):
+        list.append(1.0)
+    else:
+        list.append(0.0)
+    # word is form a "de"    
+    if (lcword == "de") or (lcword == "du") or (lcword == "des") or (lcword == "d'"):
+        list.append(1.0)
+    else:
+        list.append(0.0)
+    # word is form a title    
+    if (word == "M.") or (word == "Me") or (word == "Mme") or (word == "Mlle"):
+        list.append(1.0)
     else:
         list.append(0.0)
     # word is form a "ne"    
     if (lcword == "ne") or (lcword == "n'"):
-         list.append(1.0)
+        list.append(1.0)
     else:
         list.append(0.0)
     # word is form a "jusque"    
     if (lcword == "jusque") or (lcword == "jusqu'"):
-         list.append(1.0)
+        list.append(1.0)
     else:
         list.append(0.0)
     if (lcword in etre_forms):
-         list.append(1.0)
+        list.append(1.0)
     else:
         list.append(0.0)
     if (lcword in etre_past_participles):
-         list.append(1.0)
+        list.append(1.0)
     else:
         list.append(0.0)
     if (lcword in avoir_forms):
-         list.append(1.0)
+        list.append(1.0)
     else:
         list.append(0.0)
     if (lcword in french_whq_words):
-         list.append(1.0)
+        list.append(1.0)
     else:
         list.append(0.0)
     if (lcword in french_prepositions):
-         list.append(1.0)
+        list.append(1.0)
+    else:
+        list.append(0.0)
+    if (lcword in french_determiners):
+        list.append(1.0)
     else:
         list.append(0.0)
     if (lcword in french_definite_articles):
-         list.append(1.0)
+        list.append(1.0)
     else:
         list.append(0.0)
     if (lcword in french_possessive_articles):
-         list.append(1.0)
+        list.append(1.0)
     else:
         list.append(0.0)
     if (lcword in french_indefinite_articles):
-         list.append(1.0)
+        list.append(1.0)
     else:
         list.append(0.0)
     if (lcword in french_nominative_pronouns):
-         list.append(1.0)
+        list.append(1.0)
     else:
         list.append(0.0)
     if (lcword in french_accusative_pronouns):
-         list.append(1.0)
+        list.append(1.0)
     else:
         list.append(0.0)
-
     if (lcword in french_reflexives):
-         list.append(1.0)
+        list.append(1.0)
     else:
         list.append(0.0)
     if (lcword == "et") or (lcword == "ou"):
-         list.append(1.0)
+        list.append(1.0)
     else:
         list.append(0.0)
     if (lcword == "si") or (lcword == "s'"):
-         list.append(1.0)
+        list.append(1.0)
     else:
         list.append(0.0)
     if (lcword == "pour") or (lcword == "contre"):
-         list.append(1.0)
-    else:
-        list.append(0.0)
-    if (word == "A") or (lcword == "à") or (lcword == "au"):
-         list.append(1.0)
-    else:
-        list.append(0.0)        
-    if (lcword == "de") or (lcword == "d'") or (lcword == "du"):
-         list.append(1.0)
+        list.append(1.0)
     else:
         list.append(0.0)
     for w in frequent_words:
@@ -509,7 +544,7 @@ def sentences_to_indices(X, word_to_index, max_len):
         
         # Loop over the words of sentence_words
         for w in sentence_words:
-            w = normalize_word(w)
+            # w = normalize_word(w)
             # Set the (i,j)th entry of X_indices to the index of the correct word.
             try:
                 X_indices[i, j] = word_to_index[w]

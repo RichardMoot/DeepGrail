@@ -1,11 +1,18 @@
-# ignore automatically generate auxiliary files
+# ignore automatically generate auxiliary/evaluation/log files
 vectors.txt
 vocab.txt
 lefff-ext-3.0.txt
+super_correct.txt
+super_out.txt
+superlog_raw.txt
+superlog.txt
+test.txt
 # ignore emacs backoups
 *~
 # ignore saved models
 *.h5
+# ignore pickles
+*.pkl
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
