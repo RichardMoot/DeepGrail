@@ -23,8 +23,6 @@ from grail_data_utils import *
 np.random.seed(1)
 
 
-import pickle
-
 def save_obj(obj, name):
     with open(name + '.pkl', 'wb+') as f:
         pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
@@ -415,10 +413,10 @@ def Super_affix_model(input_shape, word_to_vec_map, word_to_prefix, word_to_suff
     # Propagate the embeddings through an LSTM layer with 128-dimensional hidden state
     # returning a batch of sequences.
     X = Dropout(0.5)(merged)
-    X = LSTM(128, recurrent_dropout=0.2, kernel_constraint=max_norm(5.), return_sequences=True)(X) 
+    X = Bidirectional(LSTM(128, recurrent_dropout=0.2, kernel_constraint=max_norm(5.), return_sequences=True))(X) 
     X = BatchNormalization()(X)
     X = Dropout(0.2)(X)
-    X = LSTM(128, recurrent_dropout=0.2, kernel_constraint=max_norm(5.), return_sequences=True)(X) 
+    X = Bidirectional(LSTM(128, recurrent_dropout=0.2, kernel_constraint=max_norm(5.), return_sequences=True))(X) 
     X = BatchNormalization()(X)
     X = Dropout(0.2)(X)
     # Add a 1d convolution to make predictions dependent on context
