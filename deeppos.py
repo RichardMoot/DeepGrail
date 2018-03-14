@@ -398,12 +398,13 @@ def POS_model(input_shape, word_to_vec_map, word_to_prefix, word_to_suffix, word
     P = Dense(32,kernel_constraint=max_norm(5.))(pref)
     S = Dense(32,kernel_constraint=max_norm(5.))(suff)
     merged = concatenate([embeddings,P,S])
+    X = Dropout(0.5)(merged)
     
     # Propagate the embeddings through an LSTM layer with 128-dimensional hidden state
     # returning a batch of sequences.
-    X = Bidirectional(LSTM(128, return_sequences=True))(merged)
+    X = Bidirectional(LSTM(128, recurrent_dropout=0.2, kernel_constraint=max_norm(5.), return_sequences=True))(X)
     X = BatchNormalization()(X)
-    Y = Dropout(0.5)(X)
+    Y = Dropout(0.2)(X)
     # Add a (time distributed) Dense layer followed by a softmax activation
     Y = TimeDistributed(Dense(numClasses, activation='softmax'))(Y)
     
