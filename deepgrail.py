@@ -8,6 +8,7 @@ from keras.layers import Bidirectional, Dense, Input, Dropout, LSTM, Activation,
 from keras.layers.embeddings import Embedding
 from keras.constraints import max_norm
 from keras import regularizers
+from keras import optimizers
 from keras.preprocessing import sequence
 from keras.utils import to_categorical
 from keras.initializers import glorot_uniform
@@ -405,8 +406,14 @@ Y_super_dev_oh = to_categorical(Y_super_dev_indices, num_classes = numSuperClass
 supermodel = Super_affix_model((maxLen,), word_to_vec_map, word_to_prefix, word_to_suffix, word_to_index)
 supermodel.summary()
 
-supermodel.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+# the main problem with the previous settings appeared to be slow convergence.
+# set the learning rate to 0.005 (instead of the default 0.001)
+
+adam_opt = optimizers.Adam(lr=0.005)
+supermodel.compile(loss='categorical_crossentropy', optimizer=adam_opt, metrics=['accuracy'])
 
 history = supermodel.fit(X_train_indices, Y_super_train_oh, epochs = 50, batch_size = 32, shuffle=True,\
                          validation_data=(X_dev_indices,Y_super_dev_oh))
 
+supermodel.save('super.h5')
