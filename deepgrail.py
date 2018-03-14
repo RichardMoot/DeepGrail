@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import sys
+import pickle
 
 from keras.models import Model, load_model
 from keras.layers import Bidirectional, Dense, Input, Dropout, LSTM, Activation, TimeDistributed, BatchNormalization, concatenate, Concatenate
@@ -21,6 +22,46 @@ from grail_data_utils import *
 
 np.random.seed(1)
 
+
+import pickle
+
+def save_obj(obj, name):
+    with open(name + '.pkl', 'wb+') as f:
+        pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
+
+def load_obj(name):
+    with open(name + '.pkl', 'rb') as f:
+        return pickle.load(f)
+
+def save_all():
+    save_obj(word_to_index, word_to_index)
+    save_obj(index_to_word, index_to_word)
+    save_obj(super_to_index, super_to_index)
+    save_obj(index_to_super, index_to_super)
+    save_obj(word_to_vec_map, word_to_vec_map)
+    save_obj(p1_to_integer, p1_to_integer)
+    save_obj(integer_to_p1, integer_to_p1)
+    save_obj(p2_to_integer, p2_to_integer)
+    save_obj(integer_to_21, integer_to_p2)
+    save_obj(p3_to_integer, p3_to_integer)
+    save_obj(integer_to_31, integer_to_p3)
+    save_obj(p4_to_integer, p4_to_integer)
+    save_obj(integer_to_p4, integer_to_p4)
+    save_obj(s1_to_integer, s1_to_integer)
+    save_obj(integer_to_s1, integer_to_s1)
+    save_obj(s2_to_integer, s2_to_integer)
+    save_obj(integer_to_s2, integer_to_s2)
+    save_obj(s3_to_integer, s3_to_integer)
+    save_obj(integer_to_s3, integer_to_s3)
+    save_obj(s4_to_integer, s4_to_integer)
+    save_obj(integer_to_s4, integer_to_s4)
+    save_obj(s5_to_integer, s5_to_integer)
+    save_obj(integer_to_s5, integer_to_s5)
+    save_obj(s6_to_integer, s6_to_integer)
+    save_obj(integer_to_s6, integer_to_s6)
+    save_obj(s7_to_integer, s7_to_integer)
+    save_obj(integer_to_s7, integer_to_s7)
+
 # very small initial part of corpus (only file aa1)
 # X, Y1, Y2, Z, vocabulary, vnorm, partsofspeech1, partsofspeech2, superset, maxLen = read_maxentdata('aa1.txt')
 
@@ -33,6 +74,7 @@ np.random.seed(1)
 X, Y1, Y2, Z, vocabulary, vnorm,\
     partsofspeech1, partsofspeech2, superset, maxLen = read_maxentdata('m2.txt')
 
+# X_train = X_train[:2048]
 numClasses = len(partsofspeech2)+1
 numSuperClasses = len(superset)+1
 
@@ -379,7 +421,8 @@ def Super_affix_model(input_shape, word_to_vec_map, word_to_prefix, word_to_suff
     X = LSTM(128, recurrent_dropout=0.2, kernel_constraint=max_norm(5.), return_sequences=True)(X) 
     X = BatchNormalization()(X)
     X = Dropout(0.2)(X)
-
+    # Add a 1d convolution to make predictions dependent on context
+    # X = Conv1D(64, 5, padding='same', kernel_constraint=max_norm(5.))(X)
     # Add a (time distributed) Dense layer followed by a softmax activation
     X = TimeDistributed(Dense(32,kernel_constraint=max_norm(5.)))(X)
     X = TimeDistributed(Dropout(0.2))(X)
