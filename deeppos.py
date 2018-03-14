@@ -333,7 +333,7 @@ s7_to_integer, integer_to_s7 = indexify(suffix7)
 word_to_prefix, word_to_suffix = compute_affixes(vocabulary)
 
 print("done")
-print("Compiling model", end='')
+print("Compiling model")
 
 
 # POS_model
@@ -369,7 +369,7 @@ def POS_model(input_shape, word_to_vec_map, word_to_prefix, word_to_suffix, word
     
     # Propagate the embeddings through an LSTM layer with 128-dimensional hidden state
     # returning a batch of sequences.
-    X = LSTM(128, return_sequences=True)(merged)
+    X = Bidirectional(LSTM(128, return_sequences=True))(merged)
     X = BatchNormalization()(X)
     Y = Dropout(0.5)(X)
     # Add a (time distributed) Dense layer followed by a softmax activation
@@ -385,8 +385,8 @@ model.summary()
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-print("done")
-print("Preparing training and development data", end='')
+
+print("Preparing training and development data...", end='')
 
 X_train_indices = lists_to_indices(X_train, word_to_index, maxLen)
 Y_train_indices = lists_to_indices(Y_train, pos2_to_index, maxLen)
