@@ -431,9 +431,9 @@ Y_dev_oh = to_categorical(Y_dev_indices, num_classes = numClasses)
 
 print("done")
 
-best_file = "best_pos.h5"
-checkpoint = ModelCheckpoint(best_file, monitor='val_acc', verbos=1, save_best_only=True, mode='max')
-reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2,\
+best_file  = "best_pos.h5"
+checkpoint = keras.callbacks.ModelCheckpoint(best_file, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
+reduce_lr  = keras.callbacks.ReduceLROnPlateau(monitor='val_loss', factor=0.2,\
                               patience=5, min_lr=0.0001)
 
 history = model.fit(X_train_indices, Y_train_oh,\
