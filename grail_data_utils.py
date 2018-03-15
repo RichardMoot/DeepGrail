@@ -512,7 +512,6 @@ def lists_to_indices(X, item_to_index, max_len, normalize=False):
             
     return X_indices
 
-# GRADED FUNCTION: sentences_to_indices
 
 def sentences_to_indices(X, word_to_index, max_len):
     """

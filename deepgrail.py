@@ -13,6 +13,7 @@ from keras import optimizers
 from keras.preprocessing import sequence
 from keras.utils import to_categorical
 from keras.initializers import glorot_uniform
+from keras.callbacks import ModelCheckpoint
 from keras import backend as K
 from sklearn.model_selection import train_test_split
 from gensim.models import KeyedVectors
@@ -454,7 +455,15 @@ supermodel.summary()
 adam_opt = optimizers.Adam(lr=0.005)
 supermodel.compile(loss='categorical_crossentropy', optimizer=adam_opt, metrics=['accuracy'])
 
-history = supermodel.fit(X_train_indices, Y_super_train_oh, epochs = 50, batch_size = 32, shuffle=True,\
+best_file = "best_super.h5"
+checkpoint = ModelCheckpoint(best_file, monitor='val_acc', verbos=1, save_best_only=True, mode='max')
+
+reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2,\
+                              patience=5, min_lr=0.0001)
+
+history = supermodel.fit(X_train_indices, Y_super_train_oh,\
+                         epochs = 50, batch_size = 32, shuffle=True,\
+                         callbacks = [checkpoint,reduce_lr],
                          validation_data=(X_dev_indices,Y_super_dev_oh))
 
-supermodel.save('super.h5')
+#supermodel.save('super.h5')

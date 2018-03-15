@@ -13,6 +13,7 @@ from keras import optimizers
 from keras.preprocessing import sequence
 from keras.utils import to_categorical
 from keras.initializers import glorot_uniform
+from keras.callbacks import ModelCheckpoint
 from keras import backend as K
 from sklearn.model_selection import train_test_split
 from gensim.models import KeyedVectors
@@ -147,8 +148,8 @@ def pretrained_embedding_layer(word_to_vec_map, word_to_index):
     embedding_layer -- pretrained layer Keras instance
     """
     
-    vocab_len = len(word_to_index) + 2                  # adding 1 to fit Keras embedding (requirement)
-    emb_dim = word_to_vec_map["est"].shape[0]      # define dimensionality of your GloVe word vectors (= 50)
+    vocab_len = len(word_to_index) + 2           # adding 1 for 'unknown'and 1 to fit Keras embedding
+    emb_dim = word_to_vec_map["est"].shape[0]    # get dimensionality of word vectors
     
     # Initialize the embedding matrix as a numpy array of zeros of shape (vocab_len, dimensions of word vectors = emb_dim)
     emb_matrix = np.zeros((vocab_len,emb_dim))
@@ -430,7 +431,15 @@ Y_dev_oh = to_categorical(Y_dev_indices, num_classes = numClasses)
 
 print("done")
 
-history = model.fit(X_train_indices, Y_train_oh, epochs = 30, batch_size = 32, shuffle=True, validation_data=(X_dev_indices,Y_dev_oh))
+best_file = "best_pos.h5"
+checkpoint = ModelCheckpoint(best_file, monitor='val_acc', verbos=1, save_best_only=True, mode='max')
+reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2,\
+                              patience=5, min_lr=0.0001)
+
+history = model.fit(X_train_indices, Y_train_oh,\
+                    epochs = 30, batch_size = 32, shuffle=True,\
+                    callbacks = [checkpoint,reduce_lr],\
+                    validation_data=(X_dev_indices,Y_dev_oh))
 
 plt.plot(history.history['loss'])
 plt.plot(history.history['val_loss'])
