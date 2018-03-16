@@ -4,8 +4,8 @@ import pickle
 def save_all_bis():
     save_obj('word_to_index', word_to_index)
     save_obj('index_to_word', index_to_word)
-    save_obj('super_to_index', pos1_to_index)
-    save_obj('index_to_super', index_to_pos1)
+    save_obj('super_to_index', super_to_index)
+    save_obj('index_to_super', index_to_super)
     save_obj('word_to_vec_map', word_to_vec_map)
     save_obj('p1_to_integer', p1_to_integer)
     save_obj('integer_to_p1', integer_to_p1)
