@@ -13,7 +13,7 @@ from keras import optimizers
 from keras.preprocessing import sequence
 from keras.utils import to_categorical
 from keras.initializers import glorot_uniform
-from keras.callbacks import ModelCheckpoint
+from keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
 from keras import backend as K
 from sklearn.model_selection import train_test_split
 from gensim.models import KeyedVectors
@@ -42,9 +42,9 @@ def save_all():
     save_obj(p1_to_integer, 'p1_to_integer')
     save_obj(integer_to_p1, 'integer_to_p1')
     save_obj(p2_to_integer, 'p2_to_integer')
-    save_obj(integer_to_21, 'integer_to_p2')
+    save_obj(integer_to_p2, 'integer_to_p2')
     save_obj(p3_to_integer, 'p3_to_integer')
-    save_obj(integer_to_31, 'integer_to_p3')
+    save_obj(integer_to_p3, 'integer_to_p3')
     save_obj(p4_to_integer, 'p4_to_integer')
     save_obj(integer_to_p4, 'integer_to_p4')
     save_obj(s1_to_integer, 's1_to_integer')
@@ -432,9 +432,10 @@ Y_dev_oh = to_categorical(Y_dev_indices, num_classes = numClasses)
 print("done")
 
 best_file  = "best_pos.h5"
-checkpoint = keras.callbacks.ModelCheckpoint(best_file, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
-reduce_lr  = keras.callbacks.ReduceLROnPlateau(monitor='val_loss', factor=0.2,\
-                              patience=5, min_lr=0.0001)
+checkpoint = ModelCheckpoint(best_file, monitor='val_acc', verbose=1,\
+                             save_best_only=True, mode='max')
+reduce_lr  = ReduceLROnPlateau(monitor='val_loss', factor=0.2,\
+                               verbose=1,patience=5, min_lr=0.0001)
 
 history = model.fit(X_train_indices, Y_train_oh,\
                     epochs = 30, batch_size = 32, shuffle=True,\

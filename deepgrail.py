@@ -459,7 +459,7 @@ best_file = "best_super.h5"
 checkpoint = keras.callbacks.ModelCheckpoint(best_file, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
 
 reduce_lr = keras.callbacks.ReduceLROnPlateau(monitor='val_loss', factor=0.2,\
-                              patience=5, min_lr=0.0001)
+                                              verbose=1,patience=5, min_lr=0.0001)
 
 history = supermodel.fit(X_train_indices, Y_super_train_oh,\
                          epochs = 50, batch_size = 32, shuffle=True,\
