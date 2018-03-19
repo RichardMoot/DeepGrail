@@ -195,10 +195,10 @@ for word in vocabulary:
     suf6 = word[-6:]
     suf7 = word[-7:]
     # take prefixes of length 4 or smaller    
-    pref1 = word [:1]
-    pref2 = word [:2]
-    pref3 = word [:3]
-    pref4 = word [:4]
+    pref1 = word[:1]
+    pref2 = word[:2]
+    pref3 = word[:3]
+    pref4 = word[:4]
     
     # update all counters for the computed affixes
     if len(suf1) > 0:
