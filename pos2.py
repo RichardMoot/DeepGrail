@@ -271,7 +271,7 @@ def POS_model(input_shape, word_to_vec_map, word_to_prefix, word_to_suffix, word
 
 model = POS_model((maxLen,), word_to_vec_map, word_to_prefix, word_to_suffix, word_to_index)
 
-trained_model = load_model('pos.h5')
+trained_model = load_model('small_pos.h5')
 
 weights = trained_model.get_weights()
 
