@@ -71,38 +71,51 @@ integer_to_s6 = load_obj('integer_to_s6')
 s7_to_integer = load_obj('s7_to_integer')
 integer_to_s7 = load_obj('integer_to_s7')
 
-
+maxLen = 266
 numSuperClasses = len(index_to_super) + 1
 
 def read_text_file(filename):
     with open(filename, 'r') as f:
         lines = 0
-        maxlen = 0
         text = {}
+        pos = {}
         for line in f:
+            outwords = []
+            outpos = []
             line = line.strip().split()
             length = len(line)
-            if (length > maxlen):
-                maxlen = length
-            text[lines] = line
-            lines = lines + 1
-    return text, lines, maxlen
+            if (length > maxLen):
+                print("Skipped long sentence (", end='')
+                print(length, end='')
+                print("):")
+                print(line)
+            else:
+                for i in range(length):
+                    item = line[i]
+                    iitems = item.split('|')
+                    word = iitems[0]
+                    outwords.append(word)
+                    if len(iitems) > 1:
+                        ipos = iitems[1]
+                        outpos.append(ipos)
+                print(outwords)
+                print(outpos)
+                text[lines] = outwords
+                pos[lines] = outpos
+                lines = lines + 1
+    return text, pos, lines
 
 def text_vocab(text):
     vocab = set()
+    pos = {}
     for (k,v) in text.items():
         for i in range(len(v)):
-            item = v[i]
-            # handle already tagged text
-            items = item.split('|')
-            word = items[0]
+            word = v[i]
             if word not in vocab:
                 vocab.add(word)
     return vocab
 
-text, numLines, maxline = read_text_file(inputfile)
-
-maxLen = 266
+text, pos, numLines = read_text_file(inputfile)
 
 vocab = text_vocab(text)
 
@@ -363,6 +376,12 @@ for i in range(len(X_indices)-1):
     string = ""
     for j in range(len(X_indices[i]-1)):
         if X_indices[i][j] != 0:
+            if pos != {}:
+                sentpos = pos[i]
+                jpos = sentpos[j]
+                posstr = str(jpos) + "|"
+            else:
+                posstr = ""
             if beta < 1:
                 tags = predict_beta(predictions[i][j],beta)
                 tagstr = str(len(tags))
@@ -374,7 +393,7 @@ for i in range(len(X_indices)-1):
                 num = np.argmax(predictions[i][j])
                 tagstr = str(index_to_super[num])
             wi = int(X_indices[i][j])
-            string = string + " " + str(index_to_word[wi])+'|'+tagstr
+            string = string + " " + str(index_to_word[wi])+'|'+posstr+tagstr
     string = string.strip()
     print(string)
     string = string + "\n"
