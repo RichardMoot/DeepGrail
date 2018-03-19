@@ -6,6 +6,7 @@ import pandas as pd
 import sys, getopt
 import os, os.path
 import pickle
+import operator
 
 from keras.models import Model, load_model
 from keras.layers import Bidirectional, Dense, Input, Dropout, LSTM, Activation, TimeDistributed, BatchNormalization, concatenate, Concatenate
@@ -393,9 +394,11 @@ for i in range(len(X_indices)):
             if beta < 1:
                 tags = predict_beta(predictions[i][j],beta)
                 tagstr = str(len(tags))
-                for t,p in tags.items():
-                    tstr = str(index_to_super[t])
-                    pstr = str(p)
+                while tags != {}:
+                    cmax = max(tags.items(), key=operator.itemgetter(1))[0]
+                    pstr = str(tags[cmax])
+                    del tags[cmax]
+                    tstr = str(index_to_super[cmax])
                     tagstr = tagstr + "|" + tstr + "|" + pstr
             else:
                 num = np.argmax(predictions[i][j])
