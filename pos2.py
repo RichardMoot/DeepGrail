@@ -51,10 +51,7 @@ integer_to_s6 = load_obj('integer_to_s6')
 s7_to_integer = load_obj('s7_to_integer')
 integer_to_s7 = load_obj('integer_to_s7')
 
-# this should be
-# numClasses = len(index_to_pos1) + 1
 
-# but we correct for a mistake in current best model file here
 numClasses = len(index_to_pos2) + 1
 
 def read_text_file(filename):
@@ -160,7 +157,7 @@ def compute_affixes(vocab):
 word_to_prefix, word_to_suffix = compute_affixes(vocab)
 
 
-wv = KeyedVectors.load_word2vec_format('../wang2vec/frwiki_cwindow50_10.bin', binary=True)
+wv = KeyedVectors.load_word2vec_format('../../wang2vec/frwiki_cwindow50_10.bin', binary=True)
 veclength = 50
 
 def remove_prefix(text, prefix):
@@ -192,6 +189,7 @@ X_indices = np.zeros((numLines,266))
 for i in range(numLines):
     line = text[i]
     for j in range(len(line)):
+        word = line[j]
         X_indices[i,j] = word_to_index[word]
 
 def pretrained_embedding_layer(word_to_vec_map, word_to_index):
@@ -273,7 +271,7 @@ def POS_model(input_shape, word_to_vec_map, word_to_prefix, word_to_suffix, word
 
 model = POS_model((maxLen,), word_to_vec_map, word_to_prefix, word_to_suffix, word_to_index)
 
-trained_model = load_model('best_pos.h5')
+trained_model = load_model('pos.h5')
 
 weights = trained_model.get_weights()
 
@@ -286,13 +284,18 @@ model.set_weights(weights2)
 
 predictions = model.predict(X_indices)
 
+f = open('pos.txt', 'w')
+
 for i in range(len(X_indices)-1):
+    string = ""
     for j in range(len(X_indices[i]-1)):
         if X_indices[i][j] != 0:
             num = np.argmax(predictions[i][j])
             wi = int(X_indices[i][j])
-            print(index_to_word[wi], end='')
-            print('|', end='')
-            print(index_to_pos2[num], end=' ')
-    print()
-    
+            string = string + " " + str(index_to_word[wi])+'|'+str(index_to_pos2[num])
+    string = string.strip()
+    print(string)
+    f.write(string)
+
+f.close()
+exit()
