@@ -1,7 +1,9 @@
+#!/usr/local/bin/python3
+
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-import sys
+import sys, getopt
 import pickle
 
 from keras.models import Model, load_model
@@ -19,9 +21,27 @@ from gensim.models import KeyedVectors
 
 from grail_data_utils import *
 
+inputfile = 'input.txt'
+outputfile = 'super.txt'
+beta = 1.0
 
-np.random.seed(1)
 
+try:
+    opts, args = getopt.getopt(sys.argv[1:],"hbio",["beta=","input=","output="])
+except getopt.GetoptError:
+    print("super.py -b <beta_value> -i <inputfile> -o <outputfile>")
+for opt, arg in opts:
+    if opt == "-h":
+        print("super.py -b <beta_value> -i <inputfile> -o <outputfile>")
+    elif opt in ("-i", "--input"):
+        inputfile = arg
+    elif opt in ("-o", "--output"):
+        outputfile = arg
+    elif opt in ("-b", "--beta"):
+        beta = float(arg)
+
+
+          
 def load_obj(name):
     with open(name + '.pkl', 'rb') as f:
         return pickle.load(f)
@@ -80,7 +100,7 @@ def text_vocab(text):
                 vocab.add(word)
     return vocab
 
-text, numLines, maxline = read_text_file('input.txt')
+text, numLines, maxline = read_text_file(inputfile)
 
 maxLen = 266
 
@@ -337,15 +357,24 @@ model.set_weights(weights2)
 
 predictions = model.predict(X_indices)
 
-f = open('super.txt', 'w')
+f = open(outputfile, 'w')
 
 for i in range(len(X_indices)-1):
     string = ""
     for j in range(len(X_indices[i]-1)):
         if X_indices[i][j] != 0:
-            num = np.argmax(predictions[i][j])
+            if beta < 1:
+                tags = predict_beta(predictions[i][j],beta)
+                tagstr = str(len(tags))
+                for t,p in tags.items():
+                    tstr = str(index_to_super[t])
+                    pstr = str(p)
+                    tagstr = tagstr + "|" + tstr + "|" + pstr
+            else:
+                num = np.argmax(predictions[i][j])
+                tagstr = str(index_to_super[num])
             wi = int(X_indices[i][j])
-            string = string + " " + str(index_to_word[wi])+'|'+str(index_to_super[num])
+            string = string + " " + str(index_to_word[wi])+'|'+tagstr
     string = string.strip()
     print(string)
     string = string + "\n"
