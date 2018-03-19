@@ -10,7 +10,7 @@ test.txt
 # ignore emacs backoups
 *~
 # ignore saved models
-*.h5
+#*.h5
 # ignore pickles
 *.pkl
 # Byte-compiled / optimized / DLL files
