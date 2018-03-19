@@ -348,6 +348,7 @@ for i in range(len(X_indices)-1):
             string = string + " " + str(index_to_word[wi])+'|'+str(index_to_super[num])
     string = string.strip()
     print(string)
+    string = string + "\n"
     f.write(string)
 
 f.close()

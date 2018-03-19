@@ -271,7 +271,7 @@ def POS_model(input_shape, word_to_vec_map, word_to_prefix, word_to_suffix, word
 
 model = POS_model((maxLen,), word_to_vec_map, word_to_prefix, word_to_suffix, word_to_index)
 
-trained_model = load_model('small_pos.h5')
+trained_model = load_model('pos.h5')
 
 weights = trained_model.get_weights()
 
@@ -281,6 +281,8 @@ for i in range(3,len(weights)):
     weights2[i] = weights[i]
 
 model.set_weights(weights2)
+
+model.save('small_pos.h5')
 
 predictions = model.predict(X_indices)
 
@@ -295,6 +297,7 @@ for i in range(len(X_indices)-1):
             string = string + " " + str(index_to_word[wi])+'|'+str(index_to_pos2[num])
     string = string.strip()
     print(string)
+    string = string + "\n"
     f.write(string)
 
 f.close()

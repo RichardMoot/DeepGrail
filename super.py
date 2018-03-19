@@ -160,7 +160,7 @@ def compute_affixes(vocab):
 word_to_prefix, word_to_suffix = compute_affixes(vocab)
 
 
-wv = KeyedVectors.load_word2vec_format('../wang2vec/frwiki_cwindow50_10.bin', binary=True)
+wv = KeyedVectors.load_word2vec_format('../../../wang2vec/frwiki_cwindow50_10.bin', binary=True)
 veclength = 50
 
 def remove_prefix(text, prefix):
@@ -324,7 +324,7 @@ def Super_model(input_shape, word_to_vec_map, word_to_prefix, word_to_suffix, wo
 
 model = Super_model((maxLen,), word_to_vec_map, word_to_prefix, word_to_suffix, word_to_index)
 
-trained_model = load_model('best_super.h5')
+trained_model = load_model('small_super.h5')
 
 weights = trained_model.get_weights()
 
@@ -348,6 +348,7 @@ for i in range(len(X_indices)-1):
             string = string + " " + str(index_to_word[wi])+'|'+str(index_to_super[num])
     string = string.strip()
     print(string)
+    string = string + "\n"
     f.write(string)
 
 f.close()
