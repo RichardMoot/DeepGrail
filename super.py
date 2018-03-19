@@ -1,7 +1,9 @@
+#!/usr/local/bin/python3
+
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-import sys
+import sys, getopt
 import pickle
 
 from keras.models import Model, load_model
@@ -19,9 +21,29 @@ from gensim.models import KeyedVectors
 
 from grail_data_utils import *
 
+inputfile = 'input.txt'
+outputfile = 'super.txt'
+beta = 1.0
 
-np.random.seed(1)
+maxLen = 266
 
+
+try:
+    opts, args = getopt.getopt(sys.argv[1:],"hbio",["beta=","input=","output="])
+except getopt.GetoptError:
+    print("super.py -b <beta_value> -i <inputfile> -o <outputfile>")
+for opt, arg in opts:
+    if opt == "-h":
+        print("super.py -b <beta_value> -i <inputfile> -o <outputfile>")
+    elif opt in ("-i", "--input"):
+        inputfile = arg
+    elif opt in ("-o", "--output"):
+        outputfile = arg
+    elif opt in ("-b", "--beta"):
+        beta = float(arg)
+
+
+          
 def load_obj(name):
     with open(name + '.pkl', 'rb') as f:
         return pickle.load(f)
@@ -57,32 +79,47 @@ numSuperClasses = len(index_to_super) + 1
 def read_text_file(filename):
     with open(filename, 'r') as f:
         lines = 0
-        maxlen = 0
         text = {}
+        pos = {}
         for line in f:
+            outwords = []
+            outpos = []
             line = line.strip().split()
             length = len(line)
-            if (length > maxlen):
-                maxlen = length
-            text[lines] = line
-            lines = lines + 1
-    return text, lines, maxlen
+            if (length > maxLen):
+                print("Skipped long sentence (", end='')
+                print(length, end='')
+                print("):")
+                print(line)
+            else:
+                for i in range(length):
+                    item = line[i]
+                    items = item.split('|')
+                    word = items[0]
+                    outwords.append(word)
+                    if len(items) > 1:
+                        pos = items[1]
+                        ourpos.append(pos)
+                text[lines] = outwords
+                pos[lines] = outpos
+                lines = lines + 1
+    return text, pos, lines
 
 def text_vocab(text):
     vocab = set()
+    pos = {}
     for (k,v) in text.items():
         for i in range(len(v)):
-            item = v[i]
-            # handle already tagged text
-            items = item.split('|')
-            word = items[0]
+            word = v[i]
+            if len(items) > 1:
+                itempos.append(items[1])
             if word not in vocab:
                 vocab.add(word)
+        if itempos != []
+           pos[k] = itempos
     return vocab
 
-text, numLines, maxline = read_text_file('input.txt')
-
-maxLen = 266
+text, pos, numLines = read_text_file(inputfile)
 
 vocab = text_vocab(text)
 
@@ -160,7 +197,7 @@ def compute_affixes(vocab):
 word_to_prefix, word_to_suffix = compute_affixes(vocab)
 
 
-wv = KeyedVectors.load_word2vec_format('../../../wang2vec/frwiki_cwindow50_10.bin', binary=True)
+wv = KeyedVectors.load_word2vec_format('../wang2vec/frwiki_cwindow50_10.bin', binary=True)
 veclength = 50
 
 def remove_prefix(text, prefix):
@@ -337,15 +374,30 @@ model.set_weights(weights2)
 
 predictions = model.predict(X_indices)
 
-f = open('super.txt', 'w')
+f = open(outputfile, 'w')
 
 for i in range(len(X_indices)-1):
     string = ""
     for j in range(len(X_indices[i]-1)):
         if X_indices[i][j] != 0:
-            num = np.argmax(predictions[i][j])
+            if pos != {}:
+                sentpos = pos[i]
+                pos = sentpos[j]
+                posstr = str(pos) + "|"
+            else:
+                posstr = ""
+            if beta < 1:
+                tags = predict_beta(predictions[i][j],beta)
+                tagstr = str(len(tags))
+                for t,p in tags.items():
+                    tstr = str(index_to_super[t])
+                    pstr = str(p)
+                    tagstr = tagstr + "|" + tstr + "|" + pstr
+            else:
+                num = np.argmax(predictions[i][j])
+                tagstr = str(index_to_super[num])
             wi = int(X_indices[i][j])
-            string = string + " " + str(index_to_word[wi])+'|'+str(index_to_super[num])
+            string = string + " " + str(index_to_word[wi])+posstr+'|'+tagstr
     string = string.strip()
     print(string)
     string = string + "\n"
