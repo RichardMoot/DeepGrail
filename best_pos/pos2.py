@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import sys, getopt
 import os, os.path
+import operator
 import pickle
 
 from keras.models import Model, load_model
@@ -323,9 +324,11 @@ for i in range(len(X_indices)):
             if beta < 1:
                 tags = predict_beta(predictions[i][j],beta)
                 tagstr = str(len(tags))
-                for t,p in tags.items():
-                    tstr = str(index_to_pos2[t])
-                    pstr = str(p)
+                while tags != {}:
+                    cmax = max(tags.items(), key=operator.itemgetter(1))[0]
+                    pstr = str(tags[cmax])
+                    del tags[cmax]
+                    tstr = str(index_to_pos2[cmax])
                     tagstr = tagstr + "|" + tstr + "|" + pstr
             else:
                 num = np.argmax(predictions[i][j])
