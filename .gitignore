@@ -8,6 +8,8 @@ superlog_raw.txt
 superlog.txt
 test.txt
 pos.txt
+# tensorboard data
+Graph/*
 # ignore emacs backoups
 *~
 # ignore saved models
