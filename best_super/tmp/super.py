@@ -98,8 +98,6 @@ def read_text_file(filename):
                     if len(iitems) > 1:
                         ipos = iitems[1]
                         outpos.append(ipos)
-                print(outwords)
-                print(outpos)
                 text[lines] = outwords
                 pos[lines] = outpos
                 lines = lines + 1

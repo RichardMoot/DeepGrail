@@ -25,8 +25,6 @@ inputfile = 'input.txt'
 outputfile = 'super.txt'
 beta = 1.0
 
-maxLen = 266
-
 
 try:
     opts, args = getopt.getopt(sys.argv[1:],"hbio",["beta=","input=","output="])
@@ -73,7 +71,7 @@ integer_to_s6 = load_obj('integer_to_s6')
 s7_to_integer = load_obj('s7_to_integer')
 integer_to_s7 = load_obj('integer_to_s7')
 
-
+maxLen = 266
 numSuperClasses = len(index_to_super) + 1
 
 def read_text_file(filename):
@@ -94,12 +92,12 @@ def read_text_file(filename):
             else:
                 for i in range(length):
                     item = line[i]
-                    items = item.split('|')
-                    word = items[0]
+                    iitems = item.split('|')
+                    word = iitems[0]
                     outwords.append(word)
-                    if len(items) > 1:
-                        pos = items[1]
-                        ourpos.append(pos)
+                    if len(iitems) > 1:
+                        ipos = iitems[1]
+                        outpos.append(ipos)
                 text[lines] = outwords
                 pos[lines] = outpos
                 lines = lines + 1
@@ -111,12 +109,8 @@ def text_vocab(text):
     for (k,v) in text.items():
         for i in range(len(v)):
             word = v[i]
-            if len(items) > 1:
-                itempos.append(items[1])
             if word not in vocab:
                 vocab.add(word)
-        if itempos != []
-           pos[k] = itempos
     return vocab
 
 text, pos, numLines = read_text_file(inputfile)
@@ -382,8 +376,8 @@ for i in range(len(X_indices)-1):
         if X_indices[i][j] != 0:
             if pos != {}:
                 sentpos = pos[i]
-                pos = sentpos[j]
-                posstr = str(pos) + "|"
+                jpos = sentpos[j]
+                posstr = str(jpos) + "|"
             else:
                 posstr = ""
             if beta < 1:
@@ -397,7 +391,7 @@ for i in range(len(X_indices)-1):
                 num = np.argmax(predictions[i][j])
                 tagstr = str(index_to_super[num])
             wi = int(X_indices[i][j])
-            string = string + " " + str(index_to_word[wi])+posstr+'|'+tagstr
+            string = string + " " + str(index_to_word[wi])+'|'+posstr+tagstr
     string = string.strip()
     print(string)
     string = string + "\n"
