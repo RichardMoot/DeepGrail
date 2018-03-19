@@ -72,7 +72,10 @@ def text_vocab(text):
     vocab = set()
     for (k,v) in text.items():
         for i in range(len(v)):
-            word = v[i]
+            item = v[i]
+            # handle already tagged text
+            items = item.split('|')
+            word = items[0]
             if word not in vocab:
                 vocab.add(word)
     return vocab
@@ -189,6 +192,7 @@ X_indices = np.zeros((numLines,266))
 for i in range(numLines):
     line = text[i]
     for j in range(len(line)):
+        word = line[j]
         X_indices[i,j] = word_to_index[word]
 
 def pretrained_embedding_layer(word_to_vec_map, word_to_index):
@@ -333,13 +337,18 @@ model.set_weights(weights2)
 
 predictions = model.predict(X_indices)
 
+f = open('super.txt', 'w')
+
 for i in range(len(X_indices)-1):
+    string = ""
     for j in range(len(X_indices[i]-1)):
         if X_indices[i][j] != 0:
             num = np.argmax(predictions[i][j])
             wi = int(X_indices[i][j])
-            print(index_to_word[wi], end='')
-            print('|', end='')
-            print(index_to_super[num], end=' ')
-    print()
-    
+            string = string + " " + str(index_to_word[wi])+'|'+str(index_to_super[num])
+    string = string.strip()
+    print(string)
+    f.write(string)
+
+f.close()
+exit()
