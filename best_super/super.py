@@ -104,7 +104,8 @@ def read_text_file(filename):
                         ipos = iitems[1]
                         outpos.append(ipos)
                 text[lines] = outwords
-                pos[lines] = outpos
+                if outpos != []:
+                    pos[lines] = outpos
                 lines = lines + 1
     return text, pos, lines
 
