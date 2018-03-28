@@ -13,8 +13,8 @@ Graph/*
 # ignore emacs backoups
 *~
 # ignore saved models
-#*.h5
-superposmodel.h5
+*.h5
+#superposmodel.h5
 temp_model.py
 best_super.tgz
 pos_model.tgz
