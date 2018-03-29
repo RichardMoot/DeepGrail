@@ -308,7 +308,7 @@ X = TimeDistributed(Dense(numSuperClasses, name='super', activation='softmax',ke
 model = Model(sentence_indices, [Pos1,Pos2,X])
 model.summary()
 
-model.compile(optimizer='rmsprop', loss=['categorical_crossentropy','categorical_crossentropy','categorical_crossentropy'], loss_weights=[0.2,0.3,0.5], metrics=['accuracy'])
+model.compile(optimizer='rmsprop', loss=['categorical_crossentropy','categorical_crossentropy','categorical_crossentropy'], loss_weights=[0.15,0.35,0.5], metrics=['accuracy'])
 
 #model.fit([X_train_emb,X_train_pref,X_train_suff], [Y_pos1_train_oh,Y_pos2_train_oh,Y_train_dev_oh], epochs=10, batch_size=32)
 
@@ -321,9 +321,9 @@ checkpoint = ModelCheckpoint(best_file, monitor='val_acc', verbose=1, save_best_
 reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2,\
                                               verbose=1,patience=5, min_lr=0.0001)
 
-model.fit([X_train_indices],\
+history =model.fit([X_train_indices],\
           [Y_pos1_train_oh,Y_pos2_train_oh,Y_super_train_oh],\
-          epochs=10, shuffle=True, batch_size=32,\
+          epochs=30, shuffle=True, batch_size=32,\
           callbacks = [checkpoint,reduce_lr],\
           validation_data=(X_dev_indices,\
                            [Y_pos1_dev_oh,Y_pos2_dev_oh,Y_super_dev_oh]))
