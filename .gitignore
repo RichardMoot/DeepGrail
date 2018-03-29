@@ -30,38 +30,6 @@ best_super.h5
 best_pos.h5
 best_pos1.h5
 embedding.h5
-# ignore pickles
-index_to_pos1.pkl
-index_to_pos2.pkl
-index_to_super.pkl
-pos1_to_index.pkl
-pos2_to_index.pkl
-super_to_index.pkl
-s1_to_integer.pkl
-s2_to_integer.pkl
-s3_to_integer.pkl
-s4_to_integer.pkl
-s5_to_integer.pkl
-s6_to_integer.pkl
-s7_to_integer.pkl
-integer_to_s1.pkl
-integer_to_s2.pkl
-integer_to_s3.pkl
-integer_to_s4.pkl
-integer_to_s5.pkl
-integer_to_s6.pkl
-integer_to_s7.pkl
-p1_to_integer.pkl
-p2_to_integer.pkl
-p3_to_integer.pkl
-p4_to_integer.pkl
-integer_to_p1.pkl
-integer_to_p2.pkl
-integer_to_p3.pkl
-integer_to_p4.pkl
-word_to_index.pkl
-index_to_word.pkl
-word_to_vec_map.pkl
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
