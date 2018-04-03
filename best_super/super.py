@@ -322,22 +322,25 @@ def Super_model(input_shape, word_to_vec_map, word_to_prefix, word_to_suffix, wo
     model -- a model instance in Keras
     """
     
-    # Define sentence_indices as the input of the graph, it should be of shape input_shape and dtype 'int32' (as it contains indices).
     sentence_indices = Input(shape = input_shape, dtype = 'int32')
     
-    # Create the embedding layer pretrained with GloVe Vectors (≈1 line)
+    # Create the embedding layer pretrained with CWindow Vectors
     embedding_layer = pretrained_embedding_layer(word_to_vec_map, word_to_index)
     
+    # Create the prefix and suffix layers
     prefix_emb = pretrained_embedding_layer(word_to_prefix, word_to_index)
     suffix_emb = pretrained_embedding_layer(word_to_suffix, word_to_index)
     
-    # Propagate sentence_indices through your embedding layer, you get back the embeddings
+    # Propagate sentence_indices through the three embedding layers, to get back the embeddings
     embeddings = embedding_layer(sentence_indices)   
-    
     pref = prefix_emb(sentence_indices)
     suff = suffix_emb(sentence_indices)
+
+    # pass the prefix and suffix embeddings to Dense layers to learn the useful affixes
     P = Dense(32)(pref)
     S = Dense(32)(suff)
+
+    # concatenate the vector embeddings to the affix Dense layers
     merged = concatenate([embeddings,P,S])
     # Propagate the embeddings through an LSTM layer with 128-dimensional hidden state
     # returning a batch of sequences.
