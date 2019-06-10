@@ -41,11 +41,13 @@ numPos1Classes = len(index_to_pos1) + 1
 numPos2Classes = len(index_to_pos2) + 1
 
 # load corpus data
-print('Loading training data')
+print('Loading corpus data')
 
 X, Y1, Y2, Z, vocabulary, vnorm, partsofspeech1, partsofspeech2, superset, maxLen = read_maxentdata('m2.txt')
 
-# computed ELMo array
+# computing ELMo array
+
+print('Computing ELMo embeddings')
 
 e = Embedder('/Users/moot/Software/FrenchELMo/')
 Xemb = e.sents2elmo(X)
@@ -123,18 +125,18 @@ print('Saving prepared datal')
 
 # save train/test/dev data
 
-print('Saving test data', end ='')
+print('Saving training data', end ='')
 
-np.savez('test.npz', X_test=X_test, X_test_embedding=X_test_embedding,\
-         Y_pos1_test_oh=Y_pos1_test_oh, Y_pos2_test_oh=Y_pos2_test_oh, Y_super_test_oh=Y_super_test_oh)
+np.savez('train.npz', X_train=X_train, X_train_embedding=X_train_embedding,\
+         Y_pos1_train_oh=Y_pos1_train_oh, Y_pos2_train_oh=Y_pos2_train_oh, Y_super_train_oh=Y_super_train_oh)
 
 print(' done!')
 
-del X_test
-del X_test_embedding
-del Y_pos1_test_oh
-del Y_pos2_test_oh
-del Y_super_test_oh
+del X_train
+del X_train_embedding
+del Y_pos1_train_oh
+del Y_pos2_train_oh
+del Y_super_train_oh
 
 print('Saving development data', end ='')
 
@@ -149,16 +151,15 @@ del Y_pos1_dev_oh
 del Y_pos2_dev_oh
 del Y_super_dev_oh
 
-print('Saving training data', end ='')
+print('Saving test data', end ='')
 
-np.savez('train.npz', X_train=X_train, X_train_embedding=X_train_embedding,\
-         Y_pos1_train_oh=Y_pos1_train_oh, Y_pos2_train_oh=Y_pos2_train_oh, Y_super_train_oh=Y_super_train_oh)
+np.savez('test.npz', X_test=X_test, X_test_embedding=X_test_embedding,\
+         Y_pos1_test_oh=Y_pos1_test_oh, Y_pos2_test_oh=Y_pos2_test_oh, Y_super_test_oh=Y_super_test_oh)
 
 print(' done!')
 
-del X_train
-del X_train_embedding
-del Y_pos1_train_oh
-del Y_pos2_train_oh
-del Y_super_train_oh
-
+del X_test
+del X_test_embedding
+del Y_pos1_test_oh
+del Y_pos2_test_oh
+del Y_super_test_oh
