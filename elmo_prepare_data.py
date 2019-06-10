@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3
+#!/Users/moot/anaconda3/bin/python
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -16,6 +16,7 @@ from keras.callbacks import ModelCheckpoint, ReduceLROnPlateau, TensorBoard
 from keras.utils import to_categorical
 from keras import backend as K
 from sklearn.model_selection import train_test_split
+from elmoformanylangs import Embedder
 
 from grail_data_utils import *
 
@@ -44,9 +45,21 @@ print('Loading training data')
 
 X, Y1, Y2, Z, vocabulary, vnorm, partsofspeech1, partsofspeech2, superset, maxLen = read_maxentdata('m2.txt')
 
-# load precomputed ELMo array
-files = np.load('Xarr.npz')
-Xarr = files['Xarr']
+# computed ELMo array
+
+e = Embedder('/Users/moot/Software/FrenchELMo/')
+Xemb = e.sents2elmo(X)
+
+del e
+
+ll = len(Xemb)-1
+Xarr= np.zeros((ll,maxLen,1024))\n
+for i in range(ll):
+    sl,t = (Xemb[i].shape)
+    for j in range(sl):
+        Xarr[i][j]= Xemb[i][j]
+
+del Xemb
 
 Y_super_indices = lists_to_indices(Z, super_to_index, maxLen)
 Y_pos1_indices = lists_to_indices(Y1, pos1_to_index, maxLen)
