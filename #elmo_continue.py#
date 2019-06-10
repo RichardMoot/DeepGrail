@@ -1,0 +1,75 @@
+#!/usr/local/bin/python3
+
+import numpy as np
+import matplotlib.pyplot as plt
+import sys, getopt
+import os, os.path
+import pickle
+import operator
+
+from keras.models import Model, load_model
+from keras.layers import Bidirectional, Masking, Dense, Input, Dropout, LSTM, Activation, TimeDistributed, BatchNormalization, concatenate, Concatenate
+from keras.layers.embeddings import Embedding
+from keras.constraints import max_norm
+from keras import regularizers
+from keras.callbacks import ModelCheckpoint, ReduceLROnPlateau, TensorBoard
+from keras.utils import to_categorical
+from keras import backend as K
+from sklearn.model_selection import train_test_split
+
+np.random.seed(1)
+
+epochs = 10
+model = 'best_elmo_superpos.h5'
+
+try:
+    opts, args = getopt.getopt(sys.argv[1:],"me",["epochs=","model="])
+    print(opts)
+except getopt.GetoptError as err:
+    print(str(err))
+    print("elmo_continue.py -b <beta_value> -i <inputfile> -o <outputfile> -m <modelfile>")
+
+for opt, arg in opts:
+    if opt == "-h":
+        print("super.py -b <beta_value> -i <inputfile> -o <outputfile> -m <modelfile>")
+    elif opt in ("-m", "--model"):
+        modelfile = arg
+    elif opt in ("-i", "--input"):
+        inputfile = arg
+    elif opt in ("-o", "--output"):
+        outputfile = arg
+    elif opt in ("-b", "--beta"):
+        beta = float(arg)
+
+
+# load corpus data
+print('Loading training/dev data')
+
+trainf = np.load('train.npz')
+
+X_train = trainf['X_train']
+X_train_embedding = trainf['X_train_embedding']
+Y_pos1_train_oh = trainf['Y_pos1_train_oh']
+Y_pos2_train_oh = trainf['Y_pos2_train_oh']
+Y_super_train_oh = trainf['Y_super_train_oh']
+
+del trainf
+
+devf = np.load('dev.npz')
+
+X_dev = devf['X_dev']
+X_dev_embedding = devf['X_dev_embedding']
+Y_pos1_dev_oh = devf['Y_pos1_dev_oh']
+Y_pos2_dev_oh = devf['Y_pos2_dev_oh']
+Y_super_dev_oh = devf['Y_super_dev_oh']
+
+# compute constants from array sizes
+
+ns, maxLen, embLen = np.shape(X_dev_embedding)
+tmp1, tmp2, numPos1Classes = np.shape(Y_pos1_dev_oh)
+tmp1, tmp2, numPos2Classes = np.shape(Y_pos2_dev_oh)
+tmp1, tmp2, numSuperClasses = np.shape(Y_super_dev_oh)
+
+del devf
+
+model = load_model('best_elmo_superpos.h5')
