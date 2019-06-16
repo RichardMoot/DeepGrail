@@ -8,6 +8,8 @@ superlog_raw.txt
 superlog.txt
 test.txt
 pos.txt
+# log file
+elmo_training_log.csv
 # precomputed data files
 dev.npz
 test.npz
