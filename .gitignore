@@ -8,6 +8,14 @@ superlog_raw.txt
 superlog.txt
 test.txt
 pos.txt
+# precomputed data files
+dev.npz
+test.npz
+train.npz
+# TLGbank files
+ab2.txt
+ae1.txt
+ner.train
 # tensorboard data
 Graph/*
 # ignore emacs backoups
