@@ -17,12 +17,26 @@ from keras.utils import to_categorical
 from keras import backend as K
 from sklearn.model_selection import train_test_split
 
-from grail_data_utils import *
-
 np.random.seed(1)
 
-best_file = 'best_elmo_superpos.h5'
+epochs = 10
 current_file = 'current_elmo_superpos.h5'
+best_file = 'best_elmo_superpos.h5'
+
+try:
+    opts, args = getopt.getopt(sys.argv[1:],"me",["epochs=","model="])
+    print(opts)
+except getopt.GetoptError as err:
+    print(str(err))
+    print("elmo_continue.py -b <beta_value> -i <inputfile> -o <outputfile> -m <modelfile>")
+
+for opt, arg in opts:
+    if opt == "-h":
+        print("elmo_continue.py -e <epochs> -m <modelfile>")
+    elif opt in ("-m", "--model"):
+        current_file = arg
+    elif opt in ("-e", "--epoch", "--epochs"):
+        epochs = int(arg)
 
 # load corpus data
 print('Loading training/dev data')
@@ -54,61 +68,21 @@ tmp1, tmp2, numSuperClasses = np.shape(Y_super_dev_oh)
 
 del devf
 
-# define model
-
-sentence_embeddings = Input(shape = (maxLen,embLen,), dtype = 'float32')
-mask = Masking(mask_value=0.0)(sentence_embeddings)
-X = Dropout(0.5)(mask)
-
-# first bi-directional LSTM layer 
-
-X = Bidirectional(LSTM(128, recurrent_dropout=0.2, kernel_constraint=max_norm(5.), return_sequences=True))(X)
-X = BatchNormalization()(X)
-X = Dropout(0.2)(X)
-
-# Pos1 output
-
-Pos1 = TimeDistributed(Dense(32,kernel_constraint=max_norm(5.)))(X)
-Pos1 = TimeDistributed(Dropout(0.2))(Pos1)
-Pos1 = TimeDistributed(Dense(numPos1Classes, name='pos1', activation='softmax',kernel_constraint=max_norm(5.)))(Pos1)
-
-# Pos2 output
-
-Pos2 = TimeDistributed(Dense(32,kernel_constraint=max_norm(5.)))(X)
-Pos2 = TimeDistributed(Dropout(0.2))(Pos2)
-Pos2 = TimeDistributed(Dense(numPos2Classes, name='pos2', activation='softmax',kernel_constraint=max_norm(5.)))(Pos2)
-
-# second bi-directional LSTM layer
-
-X = Bidirectional(LSTM(128, recurrent_dropout=0.25, kernel_constraint=max_norm(5.), return_sequences=True))(X)
-X = BatchNormalization()(X)
-X = Dropout(0.25)(X)
-
-# supertag output
-
-X = TimeDistributed(Dense(32,kernel_constraint=max_norm(5.)))(X)
-X = TimeDistributed(Dropout(0.25))(X)
-X = TimeDistributed(Dense(numSuperClasses, name='super', activation='softmax',kernel_constraint=max_norm(5.)))(X)
-
-model = Model(sentence_embeddings, [Pos1,Pos2,X])
-
-model.summary()
-
-model.compile(loss=['categorical_crossentropy','categorical_crossentropy','categorical_crossentropy'], loss_weights=[0.15,0.35,0.5], optimizer='rmsprop', metrics=['accuracy'])
+model = load_model(current_file)
 
 checkpoint = ModelCheckpoint(best_file, monitor='val_time_distributed_9_acc', verbose=1, save_best_only=True, mode='max')
 
 save_current = ModelCheckpoint(current_file, monitor='val_time_distributed_9_acc', verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
 
-
 reduce_lr = ReduceLROnPlateau(monitor='loss', factor=0.2,\
                                               verbose=1,patience=5, min_lr=0.0001)
 
-log = CSVLogger('elmo_training_log.csv')
+log = CSVLogger('elmo_training_log.csv', append=True)
+
 
 history = model.fit([X_train_embedding],\
           [Y_pos1_train_oh,Y_pos2_train_oh,Y_super_train_oh],\
-          epochs=30, shuffle=True, batch_size=32,\
-          callbacks = [checkpoint,reduce_lr,log,save_current],\
+          epochs=epochs, shuffle=True, batch_size=32,\
+          callbacks = [checkpoint,reduce_lr,save_current,log],\
           validation_data=(X_dev_embedding,\
                            [Y_pos1_dev_oh,Y_pos2_dev_oh,Y_super_dev_oh]))
