@@ -23,7 +23,7 @@ class DataGenerator(keras.utils.Sequence):
 
         return emb, [keras.utils.to_categorical(pos1, num_classes=self.n_pos1_classes),\
                      keras.utils.to_categorical(pos2, num_classes=self.n_pos2_classes),\
-                     keras.utils.to_categorical(pos2, num_classes=self.n_super_classes)]
+                     keras.utils.to_categorical(super, num_classes=self.n_super_classes)]
 #        return emb, {'pos1_output':keras.utils.to_categorical(pos1, num_classes=self.n_pos1_classes),\
 #                     'pos2_output':keras.utils.to_categorical(pos2, num_classes=self.n_pos2_classes),
 #                     'super_output':keras.utils.to_categorical(pos2, num_classes=self.n_super_classes)}
