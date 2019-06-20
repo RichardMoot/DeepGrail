@@ -18,12 +18,15 @@ class DataGenerator(keras.utils.Sequence):
         indexes = self.indexes[index*self.batch_size:(index+1)*self.batch_size]
 
         list_IDs_tmp = [self.list_IDs[k] for k in indexes]
-
+        
         emb, pos1, pos2, super = self.__data_generation(list_IDs_tmp)
 
-        return emb, {'time_distributed_3':keras.utils.to_categorical(pos1, num_classes=self.n_pos1_classes),\
-                     'time_distributed_6':keras.utils.to_categorical(pos2, num_classes=self.n_pos2_classes),
-                     'time_distributed_9':keras.utils.to_categorical(pos2, num_classes=self.n_super_classes)}
+        return emb, [keras.utils.to_categorical(pos1, num_classes=self.n_pos1_classes),\
+                     keras.utils.to_categorical(pos2, num_classes=self.n_pos2_classes),\
+                     keras.utils.to_categorical(pos2, num_classes=self.n_super_classes)]
+#        return emb, {'pos1_output':keras.utils.to_categorical(pos1, num_classes=self.n_pos1_classes),\
+#                     'pos2_output':keras.utils.to_categorical(pos2, num_classes=self.n_pos2_classes),
+#                     'super_output':keras.utils.to_categorical(pos2, num_classes=self.n_super_classes)}
         
     def on_epoch_end(self):
         self.indexes = np.arange(len(self.list_IDs))
@@ -37,8 +40,7 @@ class DataGenerator(keras.utils.Sequence):
         suptmp = []
         maxlen = 0
         for i, ID in enumerate(list_IDs_tmp):
-            fname = "sent%06d.npz" % i
-            f = np.load('TLGbank/' + fname)
+            f = np.load('TLGbank/' + ID + '.npz')
             p1 = f['pos1']
             p2 = f['pos2']
             sup = f['super']
@@ -73,4 +75,3 @@ class DataGenerator(keras.utils.Sequence):
             
         return emb, p1, p2, super
 
-    
