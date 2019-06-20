@@ -42,7 +42,6 @@ index_to_pos1 = load_obj('index_to_pos1')
 pos2_to_index = load_obj('pos2_to_index')
 index_to_pos2 = load_obj('index_to_pos2')
 
-#maxLen = 266
 numSuperClasses = len(index_to_super) + 1
 numPos1Classes = len(index_to_pos1) + 1
 numPos2Classes = len(index_to_pos2) + 1
@@ -62,7 +61,7 @@ print('Loading ELMo embedder')
 e = Embedder('/Users/moot/Software/FrenchELMo/')
 cdir = "./TLGbank/"
 
-for cursent in range(len(X)):
+for cursent in range(len(X)-1):
 
     fname = "sent%06d.npz" % cursent
     file = os.path.normpath(cdir + fname)
