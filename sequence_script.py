@@ -2,9 +2,10 @@ import numpy as np
 
 from sklearn.model_selection import train_test_split
 from keras.models import Model, load_model
-from keras.layers import Bidirectional, Masking, Dense, Input, Dropout, LSTM, Activation, TimeDistributed, BatchNormalization, concatenate, Concatenate
+from keras.layers import Bidirectional, Lambda, Masking, Dense, Input, Dropout, LSTM, Activation, TimeDistributed, BatchNormalization, concatenate, Concatenate
 from keras.layers.embeddings import Embedding
-from keras.constraints import max_norm
+from keras.constraints import max_norm, min_max_norm, unit_norm
+from keras.initializers import random_uniform
 from keras import regularizers
 from keras.callbacks import ModelCheckpoint, CSVLogger, ReduceLROnPlateau, TensorBoard
 from keras.utils import to_categorical
@@ -24,6 +25,7 @@ current_file = 'current_gen_elmo_superpos.h5'
 
 
 all = ["sent%06d" %i for i in range(15748)]
+# all = ["sent%06d" %i for i in range(100)]
 train, testdev = train_test_split(all, test_size=0.4)
 test, dev = train_test_split(testdev, test_size=0.5)
 
@@ -39,15 +41,26 @@ numPos1Classes = 30
 numPos2Classes = 32
 numSuperClasses = 891
 
-sentence_embeddings = Input(shape = (None,embLen,), dtype = 'float32')
-mask = Masking(mask_value=0.0)(sentence_embeddings)
-X = Dropout(0.5)(mask)
+sentence_embeddings0 = Input(shape = (None,embLen,), dtype = 'float32')
+sentence_embeddings1 = Input(shape = (None,embLen,), dtype = 'float32')
+sentence_embeddings2 = Input(shape = (None,embLen,), dtype = 'float32')
+
+# take weighted average of inputs
+
+stacked = Lambda(lambda x: K.stack([x[0],x[1],x[2]], axis=-1))([sentence_embeddings0,sentence_embeddings1,sentence_embeddings2])
+weighted = Dense(1, kernel_constraint=unit_norm(), kernel_initializer=random_uniform(0.45,0.55), use_bias=False)(stacked)
+weighted = Lambda(lambda x: K.squeeze(x, axis=-1))(weighted)
+
+#concat = concatenate([sentence_embeddings0, sentence_embeddings1, sentence_embeddings2])
+
+mask = Masking(mask_value=0.0)(weighted)
+dropout = Dropout(0.5)(mask)
 
 # first bi-directional LSTM layer 
 
-X = Bidirectional(LSTM(128, recurrent_dropout=0.2, kernel_constraint=max_norm(5.), return_sequences=True))(X)
+X = Bidirectional(LSTM(128, recurrent_dropout=0.2, kernel_constraint=max_norm(5.), return_sequences=True))(mask)
 X = BatchNormalization()(X)
-X = Dropout(0.2)(X)
+X = Dropout(0.20)(X)
 
 # Pos1 output
 
@@ -66,14 +79,16 @@ pos2_output = TimeDistributed(Dense(numPos2Classes, name='pos2_output', activati
 X = Bidirectional(LSTM(128, recurrent_dropout=0.25, kernel_constraint=max_norm(5.), return_sequences=True))(X)
 X = BatchNormalization()(X)
 X = Dropout(0.25)(X)
+# concatenate ELMo vectors before output; doesn't improve
+# X = concatenate([X,dropout])
 
 # supertag output
 
 X = TimeDistributed(Dense(32,kernel_constraint=max_norm(5.)))(X)
-X = TimeDistributed(Dropout(0.25))(X)
+X = TimeDistributed(Dropout(0.2))(X)
 super_output = TimeDistributed(Dense(numSuperClasses, name='super_output', activation='softmax',kernel_constraint=max_norm(5.)))(X)
 
-model = Model(sentence_embeddings, [pos1_output,pos2_output,super_output])
+model = Model([sentence_embeddings0, sentence_embeddings1, sentence_embeddings2], [pos1_output,pos2_output,super_output])
 
 model.summary()
 
@@ -91,9 +106,8 @@ log = CSVLogger('elmo_training_log.csv')
 
 
 history = model.fit_generator(training_generator,\
-                              epochs=30, shuffle=True, workers=2, use_multiprocessing=True,\
+                              epochs=100, shuffle=True, workers=2, use_multiprocessing=True,\
                               callbacks = [checkpoint,reduce_lr,log,save_current],
                               validation_data=validation_generator)
 
 
-model.save('test_superpos.h5')
