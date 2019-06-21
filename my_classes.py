@@ -19,9 +19,9 @@ class DataGenerator(keras.utils.Sequence):
 
         list_IDs_tmp = [self.list_IDs[k] for k in indexes]
         
-        emb, pos1, pos2, super = self.__data_generation(list_IDs_tmp)
+        emb0, emb1, emb2, pos1, pos2, super = self.__data_generation(list_IDs_tmp)
 
-        return emb, [keras.utils.to_categorical(pos1, num_classes=self.n_pos1_classes),\
+        return [emb0, emb1, emb2], [keras.utils.to_categorical(pos1, num_classes=self.n_pos1_classes),\
                      keras.utils.to_categorical(pos2, num_classes=self.n_pos2_classes),\
                      keras.utils.to_categorical(super, num_classes=self.n_super_classes)]
 #        return emb, {'pos1_output':keras.utils.to_categorical(pos1, num_classes=self.n_pos1_classes),\
@@ -34,7 +34,9 @@ class DataGenerator(keras.utils.Sequence):
             np.random.shuffle(self.indexes)
 
     def __data_generation(self, list_IDs_tmp):
-        em = []
+        em0 = []
+        em1 = []
+        em2 = []
         p1tmp = []
         p2tmp = []
         suptmp = []
@@ -44,14 +46,18 @@ class DataGenerator(keras.utils.Sequence):
             p1 = f['pos1']
             p2 = f['pos2']
             sup = f['super']
-            e1 = f['embavg']
+            e0 = f['emb0']
+            e1 = f['emb1']
+            e2 = f['emb2']
             l = len(p1)
             if l > maxlen:
                 maxlen = l
             p1tmp.append(p1)
             p2tmp.append(p2)
             suptmp.append(sup)
-            em.append(e1)
+            em0.append(e0)
+            em1.append(e1)
+            em2.append(e2)
         
         p1 = np.zeros((self.batch_size, maxlen))
         for i in range(self.batch_size):
@@ -68,10 +74,18 @@ class DataGenerator(keras.utils.Sequence):
             for j in range(len(suptmp[i])):
                 super[i][j] = suptmp[i][j]
                 
-        emb = np.zeros((self.batch_size, maxlen, 1024))
+        emb0 = np.zeros((self.batch_size, maxlen, 1024))
         for i in range(self.batch_size):
-            for j in range(len(em[i])):
-                emb[i][j] = em[i][0][j]
+            for j in range(len(em0[i])):
+                emb0[i][j] = em0[i][0][j]
+        emb1 = np.zeros((self.batch_size, maxlen, 1024))
+        for i in range(self.batch_size):
+            for j in range(len(em1[i])):
+                emb1[i][j] = em1[i][0][j]
+        emb2 = np.zeros((self.batch_size, maxlen, 1024))
+        for i in range(self.batch_size):
+            for j in range(len(em2[i])):
+                emb2[i][j] = em2[i][0][j]
             
-        return emb, p1, p2, super
+        return emb0, emb1, emb2, p1, p2, super
 
