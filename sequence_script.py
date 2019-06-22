@@ -16,7 +16,7 @@ from my_classes import DataGenerator
 
 # set random seed to seed_value for reproducability
 
-seed_value = 0
+seed_value = 1
 os.environ['PYTHONHASHSEED'] = str(seed_value)
 random.seed(seed_value)
 np.random.seed(seed_value)
@@ -98,14 +98,14 @@ pos2_output = TimeDistributed(Dense(numPos2Classes, name='pos2_output', activati
 
 X = Bidirectional(LSTM(128, recurrent_dropout=0.25, kernel_constraint=max_norm(5.), return_sequences=True))(X)
 X = BatchNormalization()(X)
-X = Dropout(0.3175)(X)
-# concatenate ELMo vectors before output; doesn't improve
+X = Dropout(0.375)(X)
+# concatenate ELMo vectors before output; doesn't improve performance
 # X = concatenate([X,dropout])
 
 # supertag output
 
 X = TimeDistributed(Dense(32,kernel_constraint=max_norm(5.)))(X)
-X = TimeDistributed(Dropout(0.3125))(X)
+X = TimeDistributed(Dropout(0.375))(X)
 super_output = TimeDistributed(Dense(numSuperClasses, name='super_output', activation='softmax',kernel_constraint=max_norm(5.)))(X)
 
 model = Model([sentence_embeddings0, sentence_embeddings1, sentence_embeddings2], [pos1_output,pos2_output,super_output])
