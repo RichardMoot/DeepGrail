@@ -1,3 +1,4 @@
+.DS_Store
 # ignore automatically generate auxiliary/evaluation/log files
 vectors.txt
 vocab.txt
