@@ -40,7 +40,9 @@ best_super.h5
 best_pos.h5
 best_pos1.h5
 embedding.h5
-
+TLGbank/*
+parse_gold.txt
+parse_silver.txt
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
