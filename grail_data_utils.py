@@ -483,6 +483,8 @@ def read_vecs(file, vnorm, vocabulary):
     return words_to_index, index_to_words, word_to_vec_map
 
 
+# convert array of lists X into an (m,max_len) array
+
 def lists_to_indices(X, item_to_index, max_len, normalize=False):
 
     m = X.shape[0]                                   # number of training examples
