@@ -317,13 +317,13 @@ def Super_model(input_shape, word_to_vec_map, word_to_prefix, word_to_suffix, wo
     # Define sentence_indices as the input of the graph, it should be of shape input_shape and dtype 'int32' (as it contains indices).
     sentence_indices = Input(shape = input_shape, dtype = 'int32')
     
-    # Create the embedding layer pretrained with GloVe Vectors (≈1 line)
+    # Create the embedding layer pretrained with CWindow vectors
     embedding_layer = pretrained_embedding_layer(word_to_vec_map, word_to_index)
     
     prefix_emb = pretrained_embedding_layer(word_to_prefix, word_to_index)
     suffix_emb = pretrained_embedding_layer(word_to_suffix, word_to_index)
     
-    # Propagate sentence_indices through your embedding layer, you get back the embeddings
+    # Propagate sentence_indices through embedding, prefix and suffix layers
     embeddings = embedding_layer(sentence_indices)   
     
     pref = prefix_emb(sentence_indices)
