@@ -1,11 +1,8 @@
 # DeepGrail
 
-This repository contains an experimental set of Jupyter notebooks and Python files replacing my older part-of-speech taggers and supertaggers with modern deep learning versions. A summary of my deep learning experiments using TLGbank data to develop such part-of-speech taggers and supertaggers can be found below.
+This repository contains an experimental set of Jupyter notebooks and Python files replacing my older part-of-speech taggers and supertaggers with modern deep learning versions. A summary of my deep learning experiments using [TLGbank data](https://richardmoot.github.io/TLGbank/) to develop such part-of-speech taggers and supertaggers can be found below.
 
-
-### Dependencies
-
-These scripts and notebooks require some package for producing distributional vector representations for words. This can be either `fastText` (using https://fasttext.cc/docs/en/crawl-vectors.html) or `ELMo` (recommended, using https://github.com/HIT-SCIR/ELMoForManyLangs).
+This code has been designed to work together with the [GrailLight parser](https://github.com/RichardMoot/GrailLight) to provide a wide-coverage syntactic and semantic parser for French. 
 
 ### Supertagger results and comparison with previous results
 
@@ -29,6 +26,11 @@ The table below lists the percentage of correct formulas (under `Correct`) and t
 ## Access
 
 The current repository is private until the code has stabilised and a paper describing the results has been published. Until then, contact me for access. 
+
+### Dependencies
+
+These scripts and notebooks require some package for producing distributional vector representations for words. This can be either `fastText` (using https://fasttext.cc/docs/en/crawl-vectors.html) or `ELMo` (recommended, using https://github.com/HIT-SCIR/ELMoForManyLangs).
+
 
 ## References
 
