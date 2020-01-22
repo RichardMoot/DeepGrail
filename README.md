@@ -13,6 +13,8 @@ The current best LSTM supertagger assigns 92.218 percent of words their correct 
 
 #### Detailed results
 
+The table below lists the percentage of correct formulas (under `Correct`) and the average number of formulas assigned to each word (under `Formulas`).
+
 | Beta | Correct | Formulas|
 |:-----|--------:|--------:|
 1.0   | 92.22 | 1.00 |
