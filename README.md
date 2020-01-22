@@ -27,7 +27,7 @@ Percentage of development data correctly tagged: 92.218 (for comparison: best ma
 ## References
 
 Moot, R. (2015) _A Type-Logical Treebank for French_, Journal of
-Language Modelling **3(1)**, pp. 229-265.
+Language Modelling **3(1)**, pp. 229-265 [Github](https://richardmoot.github.io/TLGbank/).
 
-Moot, R. (2019) _Grail Light_ (Github)[https://github.com/RichardMoot/GrailLight] (Hal)[
-https://hal.archives-ouvertes.fr/hal-02101396/]
+Moot, R. (2019) _Grail Light_ [Github](https://github.com/RichardMoot/GrailLight) [Hal](
+https://hal.archives-ouvertes.fr/hal-02101396/)
