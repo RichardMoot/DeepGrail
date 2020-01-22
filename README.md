@@ -9,7 +9,7 @@ These scripts and notebooks require some package for producing distributional ve
 
 ### Supertagger results
 
-Percentage of development data correctly tagged: 92.218 (for comparison: best maximum entropy results for the same data are 90.4)
+Percentage of development data correctly tagged: 92.218 (for comparison: [best maximum entropy models](https://github.com/RichardMoot/models) for the same data are 90.41, with the gold part-of-speech tag given, and, for a more honest comparison, 88.86 without)
 
 #### Detailed results
 
@@ -23,6 +23,10 @@ Percentage of development data correctly tagged: 92.218 (for comparison: best ma
 0.001 | 98.97 | 2.40 |
 0.0005 | 99.17 | 2.91 |
 0.0001 | 99.48 | 4.73 |
+
+## Access
+
+The current repository is private until the code has stabilised and a paper describing the results has been published. Until then, contact me for access. 
 
 ## References
 
