@@ -9,7 +9,7 @@ These scripts and notebooks require some package for producing distributional ve
 
 ### Supertagger results
 
-Percentage of development data correctly tagged: 92.218 (for comparison: [best maximum entropy models](https://github.com/RichardMoot/models) for the same data are 90.41, with the gold part-of-speech tag given, and, for a more honest comparison, 88.86 without)
+The current best LSTM supertagger assigns 92.218 percent of words their correct formula. For comparison, the [best maximum entropy models](https://github.com/RichardMoot/models) for the same data assign 90.41 percent correct, with the gold part-of-speech tag given. The correct part-of-speech tags helps the maximum entropy supertagger quite a bit: a more honest comparison, without the gold part-of-speech tags, has only 88.86 percent of the formulas correct. The LSTM supertagger therefore represents a significant improvement over the earlier results.
 
 #### Detailed results
 
