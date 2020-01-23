@@ -25,7 +25,7 @@ The table below lists the percentage of correct formulas (under `Correct`) and t
 
 ### Comparison
 
-The table and image below compares the maximum entropy part-of-speech/supertagger, with the LSTM version and the LSTM version using ELMo vector embeddings. The trade-off here is to get an error percentage which is as small as possible (to ensure the correct formula is among those assigned) while having keeping the average number of possible words per formula low (for parsing efficiency).
+The table and image below compare the maximum entropy part-of-speech/supertagger  with the LSTM version and the LSTM version using ELMo vector embeddings (on the [same data](https://richardmoot.github.io/TLGbank/)). The trade-off here is to get an error percentage which is as small as possible (to ensure the correct formula is among those assigned) while having keeping the average number of possible words per formula low (for parsing efficiency).
 
 | Model | POS | Super | 0.1 | 0.01 | 0.001 |
 |-------|-----|-------|-----|------|-------|
