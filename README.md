@@ -52,7 +52,7 @@ This material has been presented at several [presentations](https://richardmoot.
 ## References
 
 Moot, R. (2015) _A Type-Logical Treebank for French_, Journal of
-Language Modelling **3(1)**, pp. 229-265 ([Github](https://richardmoot.github.io/TLGbank/))
+Language Modelling **3(1)**, pp. 229-265 ([Github](https://richardmoot.github.io/TLGbank/), [HAL](https://hal.archives-ouvertes.fr/hal-02102867v1)).
 
-Moot, R. (2019) _Grail Light_ ([Github](https://github.com/RichardMoot/GrailLight), [Hal](
+Moot, R. (2019) _Grail Light_ ([Github](https://github.com/RichardMoot/GrailLight), [HAL](
 https://hal.archives-ouvertes.fr/hal-02101396/))
