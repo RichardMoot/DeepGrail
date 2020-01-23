@@ -31,6 +31,9 @@ The current repository is private until the code has stabilised and a paper desc
 
 These scripts and notebooks require some package for producing distributional vector representations for words. This can be either `fastText` (using https://fasttext.cc/docs/en/crawl-vectors.html) or `ELMo` (recommended, using https://github.com/HIT-SCIR/ELMoForManyLangs).
 
+## Presentations of this material
+
+This material has been presented at several [presentations](https://richardmoot.github.io/Slides/), notable at [WoLLIC2019](https://richardmoot.github.io/Slides/WoLLIC2019.pdf) (Utrecht) and in [Düsseldorf](https://richardmoot.github.io/Slides/WCS_Dusseldorf.pdf).
 
 ## References
 
