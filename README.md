@@ -45,7 +45,9 @@ These scripts and notebooks require some package for producing distributional ve
 
 ## Presentations of this material
 
-This material has been presented at several [presentations](https://richardmoot.github.io/Slides/), notable at [WoLLIC2019](https://richardmoot.github.io/Slides/WoLLIC2019.pdf) (Utrecht) and in [Düsseldorf](https://richardmoot.github.io/Slides/WCS_Dusseldorf.pdf).
+This material has been presented at several [presentations](https://richardmoot.github.io/Slides/), notable at:
+* [WoLLIC2019](https://richardmoot.github.io/Slides/WoLLIC2019.pdf) (Utrecht), where I talk about vector representations, wide-coverage semantics, and reconciling vector-based semantics with formal semantics,
+* [Düsseldorf](https://richardmoot.github.io/Slides/WCS_Dusseldorf.pdf), one of the first presentations of Grail Light with the deep learning component (DeepGrail); also has some discussion about the difference between type-logical grammars and combinatory categorial grammars.
 
 ## References
 
