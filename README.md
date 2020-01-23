@@ -31,7 +31,7 @@ The table below lists the percentage of correct formulas (under `Correct`) and t
 | LSTM | 98.4 | 92.2 | 95.8 (1.2) | 97.9 (1.5) | 99.0 (2.4) |
 | LSTM+ELMo | 99.1 | 93.2 | 97.6 (1.1) | 98.6 (1.5) | 99.3 (3.0) |
 
-[visual map of number of formulas/word versus correctness][https://github.com/RichardMoot/Slides/blob/master/eval_deep.png]
+![visual map of number of formulas/word versus correctness][https://github.com/RichardMoot/Slides/blob/master/eval_deep.png]
 
 ## Access
 
