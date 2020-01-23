@@ -25,13 +25,15 @@ The table below lists the percentage of correct formulas (under `Correct`) and t
 
 ### Comparison
 
+The table and image below compares the maximum entropy part-of-speech/supertagger, with the LSTM version and the LSTM version using ELMo vector embeddings. The trade-off here is to get an error percentage which is as small as possible (to ensure the correct formula is among those assigned) while having keeping the average number of possible words per formula low (for parsing efficiency).
+
 | Model | POS | Super | 0.1 | 0.01 | 0.001 |
 |-------|-----|-------|-----|------|-------|
 | MaxEnt | 97.8 | 90.6 | 96.4 (1.4) | 98.4 (2.3) | 98.8 (4.7) |
 | LSTM | 98.4 | 92.2 | 95.8 (1.2) | 97.9 (1.5) | 99.0 (2.4) |
 | LSTM+ELMo | 99.1 | 93.2 | 97.6 (1.1) | 98.6 (1.5) | 99.3 (3.0) |
 
-![visual map of number of formulas/word versus correctness](https://github.com/RichardMoot/Slides/blob/master/eval_deep.png)
+![visual map of the average number of formulas/word versus the error percentage for the different models](https://github.com/RichardMoot/Slides/blob/master/eval_deep.png)
 
 ## Access
 
