@@ -57,4 +57,4 @@ Language Modelling **3(1)**, pp. 229-265 ([Github](https://richardmoot.github.io
 Moot, R. (2019) _Grail Light_ ([Github](https://github.com/RichardMoot/GrailLight), [HAL](
 https://hal.archives-ouvertes.fr/hal-02101396/))
 
-Kogkalidis, K., Moortgat, M., Moot, R. and Tziafas, G. (2019) _Deductive Parsing with an Unbounded Type Lexicon_, [HAL](https://hal-lirmm.ccsd.cnrs.fr/lirmm-02313572/)
+Kogkalidis, K., Moortgat, M., Moot, R. and Tziafas, G. (2019) _Deductive Parsing with an Unbounded Type Lexicon_, ([HAL](https://hal-lirmm.ccsd.cnrs.fr/lirmm-02313572/))
