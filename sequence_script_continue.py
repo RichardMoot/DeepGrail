@@ -63,64 +63,9 @@ numSuperClasses = 891
 l1_value = 0.0001
 l2_value = 0.0001
 
-# input layers are the three ELMo output layers
 
-sentence_embeddings0 = Input(shape = (None,embLen,), dtype = 'float32')
-sentence_embeddings1 = Input(shape = (None,embLen,), dtype = 'float32')
-sentence_embeddings2 = Input(shape = (None,embLen,), dtype = 'float32')
+model = load_model(best_file)
 
-# take weighted average of three inputs
-
-#stacked = Lambda(lambda x: K.stack([x[0],x[1],x[2]], axis=-1))([sentence_embeddings0,sentence_embeddings1,sentence_embeddings2])
-# use unit_norm to force sum of 1 and intialize weights close to 0.33
-#weighted = Dense(1, kernel_constraint=unit_norm(), kernel_initializer=random_uniform(0.30,0.36), use_bias=False)(stacked)
-# use weighted sum with l1l2 regularization
-#weighted = Dense(1, kernel_regularizer=regularizers.l1_l2(l1_value,l2_value), use_bias=False)(stacked)
-#weighted = Lambda(lambda x: K.squeeze(x, axis=-1))(weighted)
-
-concat = concatenate([sentence_embeddings0, sentence_embeddings1, sentence_embeddings2])
-
-mask = Masking(mask_value=0.0)(concat)
-dropout = Dropout(0.5)(mask)
-
-# first bi-directional LSTM layer 
-
-X = Bidirectional(LSTM(128, recurrent_dropout=0.2, kernel_constraint=max_norm(4.), return_sequences=True))(dropout)
-X = BatchNormalization()(X)
-X = Dropout(0.2)(X)
-
-# Pos1 output
-
-Pos1 = TimeDistributed(Dense(32,kernel_constraint=max_norm(5.)))(X)
-Pos1 = TimeDistributed(Dropout(0.2))(Pos1)
-pos1_output = TimeDistributed(Dense(numPos1Classes, name='pos1_output', activation='softmax',kernel_constraint=max_norm(4.)))(Pos1)
-
-# Pos2 output
-
-Pos2 = TimeDistributed(Dense(32,kernel_constraint=max_norm(5.)))(X)
-Pos2 = TimeDistributed(Dropout(0.2))(Pos2)
-pos2_output = TimeDistributed(Dense(numPos2Classes, name='pos2_output', activation='softmax',kernel_constraint=max_norm(4.)))(Pos2)
-
-# second bi-directional LSTM layer
-
-X = Bidirectional(LSTM(128, recurrent_dropout=0.2, kernel_constraint=max_norm(4.), return_sequences=True))(X)
-X = BatchNormalization()(X)
-X = Dropout(0.2)(X)
-# concatenate ELMo vectors before output; doesn't improve performance
-# X = concatenate([X,dropout])
-
-# supertag output
-
-X = TimeDistributed(Dense(32,kernel_constraint=max_norm(5.)))(X)
-#X = TimeDistributed(Dense(32,kernel_regularizer=regularizers.l1_l2(l1_value,l2_value)))(X)
-X = TimeDistributed(Dropout(0.2))(X)
-super_output = TimeDistributed(Dense(numSuperClasses, name='super_output', activation='softmax',kernel_regularizer=regularizers.l1_l2(l1_value,l2_value)))(X)
-
-model = Model([sentence_embeddings0, sentence_embeddings1, sentence_embeddings2], [pos1_output,pos2_output,super_output])
-
-model.summary()
-
-model.compile(loss=['categorical_crossentropy','categorical_crossentropy','categorical_crossentropy'], optimizer='rmsprop', metrics=['accuracy'])
 
 checkpoint = ModelCheckpoint(best_file, monitor='val_time_distributed_8_accuracy', verbose=1, save_best_only=True, mode='max')
 
