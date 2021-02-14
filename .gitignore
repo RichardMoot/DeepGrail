@@ -9,8 +9,10 @@ superlog_raw.txt
 superlog.txt
 test.txt
 pos.txt
+*.tgz
 # log file
-elmo_training_log.csv
+bert_training_log*.csv
+elmo_training_log*.csv
 # precomputed data files
 dev.npz
 test.npz
@@ -19,6 +21,8 @@ train.npz
 ab2.txt
 ae1.txt
 ner.train
+# Camembert files
+camembert.v0/*
 # tensorboard data
 Graph/*
 # ignore emacs backoups
@@ -42,6 +46,7 @@ best_pos.h5
 best_pos1.h5
 embedding.h5
 TLGbank/*
+BERT_TLGbank/*
 parse_gold.txt
 parse_silver.txt
 # Byte-compiled / optimized / DLL files
