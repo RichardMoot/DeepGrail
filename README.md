@@ -43,6 +43,35 @@ The current repository is private until the code has stabilised and a paper desc
 
 These scripts and notebooks require some package for producing distributional vector representations for words. This can be either `fastText` (using https://fasttext.cc/docs/en/crawl-vectors.html) or `ELMo` (recommended, using https://github.com/HIT-SCIR/ELMoForManyLangs).
 
+## Using the taggers
+
+The model files are too big to be included in the repository. Contact me if you want the latest models.
+
+There are two main tagger scripts `super.py` and `elmo_super.py`. The main difference between these two scripts is that the first uses the averaged ELMo vectors as input (one 1024-float vector per word) whereas the second uses all ELMo vectors as input (three 1024-float vectors per word). In practice, there doesn't appear to be a big difference in performance between the two, so for most people the `super.py` script is preferred. 
+
+The script is invoked as follows.
+```
+super.py --input input.txt --output super.txt --model=modelfile --beta 0.01 
+```
+The input and output files can be specified using the `--input` and `--output` options (they default to `input.txt` and `super.txt` if not explicitly specified). The model file contains the filename of the tagger model to be loaded. Finally, the `beta` parameter specifies the number of formulas to output for each word as a function of the probability assigned to the most likely formula. For example, a beta value of 0.01 and most likely assignment of 0.9 means all formula with probability over 0.009 will be output. 
+
+
+## Training your own models
+
+To train your own models, you need the training data stored in the `TLGbank` directory. Each file `sentXXXXXX.npz` contains sentence number XXXXXX, and sentence should be numbered from 0 to the value of `treebank_sentences` minus 1.
+
+Traning is done using the following command.
+```
+avg_sequence_script.py
+```
+There are a number of variant training scripts (`all_sequence_script.py` concatenates the different ELMo vectors, whereas `w_avg_sequence_script.py` estimates a weighted average as part of its model parameters).
+
+In each case, the model is fairly simple: the ELMo embedding is fed to two bidirectional LSTM layers and a final dense layer computes the tags. Regularisation parameters and the optimiser can easily be adapted, as can the number of epochs (the default is 100).
+
+Intermediate data is stored in the files `current_gen_elmo_superpos.h5` (model for the last completed epoch) and `best_gen_elmo_superpos.h5` (the current best performing model on the validation data). Training statistics are ouput in `elmo_training_log.csv`.
+
+If desired, training can be continued after the last epoch (or after execution has been aborted) by using `avg_sequence_script_continue.py` (or `all_sequence_script_continue.py` for any of the scripts requiring all ELMo vectors as input). The resumes training from `current_gen_elmo_superpos.h5` and continues for 100 more epochs.
+
 ## Presentations of this material
 
 This material has been [presented](https://richardmoot.github.io/Slides/) on a number of occasions, notably at:
