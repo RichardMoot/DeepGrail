@@ -1,3 +1,5 @@
+#!/usr/local/bin/python3
+
 import numpy as np
 import tensorflow as tf
 import os, random
@@ -60,11 +62,7 @@ numPos1Classes = 30
 numPos2Classes = 32
 numSuperClasses = 891
 
-l1_value = 0.0001
-l2_value = 0.0001
-
-
-model = load_model(best_file)
+model = load_model(current_file)
 
 
 checkpoint = ModelCheckpoint(best_file, monitor='val_time_distributed_8_accuracy', verbose=1, save_best_only=True, mode='max')

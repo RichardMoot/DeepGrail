@@ -1,5 +1,8 @@
 #!/Users/moot/anaconda3/bin/python
 
+# POS- and supertagger script for use with models having all three
+# ELMo vectors as input
+
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
