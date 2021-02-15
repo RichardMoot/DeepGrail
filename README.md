@@ -53,12 +53,12 @@ The script is invoked as follows.
 ```
 super.py --input input.txt --output super.txt --model=modelfile --beta 0.01 
 ```
-The input and output files can be specified using the `--input` and `--output` options (they default to `input.txt` and `super.txt` if not explicitly specified). The model file contains the filename of the tagger model to be loaded. Finally, the `beta` parameter specifies the number of formulas to output for each word as a function of the probability assigned to the most likely formula. For example, a beta value of 0.01 and most likely assignment of 0.9 means all formula with probability over 0.009 will be output. 
+The input and output files can be specified using the `--input` and `--output` options (they default to `input.txt` and `super.txt` if not explicitly specified). The model file contains the filename of the tagger model to be loaded. Finally, the `beta` parameter specifies the number of formulas to output for each word as a function of the probability assigned to the most likely formula. For example, a beta value of 0.01 and most likely assignment of 0.9 means all formulas with probability over 0.009 will be output. 
 
 
 ## Training your own models
 
-To train your own models, you need the training data stored in the `TLGbank` directory. Each file `sentXXXXXX.npz` contains sentence number XXXXXX, and sentence should be numbered from 0 to the value of `treebank_sentences` minus 1.
+To train your own models, you need the training data stored in the `TLGbank` directory. Each file `sentXXXXXX.npz` contains sentence number XXXXXX, and sentences should be numbered from 0 to the value of `treebank_sentences` minus 1.
 
 Traning is done using the following command.
 ```
@@ -68,9 +68,9 @@ There are a number of variant training scripts (`all_sequence_script.py` concate
 
 In each case, the model is fairly simple: the ELMo embedding is fed to two bidirectional LSTM layers and a final dense layer computes the tags. Regularisation parameters and the optimiser can easily be adapted, as can the number of epochs (the default is 100).
 
-Intermediate data is stored in the files `current_gen_elmo_superpos.h5` (model for the last completed epoch) and `best_gen_elmo_superpos.h5` (the current best performing model on the validation data). Training statistics are ouput in `elmo_training_log.csv`.
+Intermediate models are stored in the files `current_gen_elmo_superpos.h5` (model for the last completed epoch) and `best_gen_elmo_superpos.h5` (the model which currently performs best on the validation data). Training statistics are ouput in `elmo_training_log.csv`.
 
-If desired, training can be continued after the last epoch (or after execution has been aborted) by using `avg_sequence_script_continue.py` (or `all_sequence_script_continue.py` for any of the scripts requiring all ELMo vectors as input). The resumes training from `current_gen_elmo_superpos.h5` and continues for 100 more epochs.
+If desired, training can be continued after the last epoch (or after execution has been aborted) by using `avg_sequence_script_continue.py` (or `all_sequence_script_continue.py` for any of the scripts requiring all ELMo vectors as input). This resumes training from `current_gen_elmo_superpos.h5` and continues for 100 more epochs.
 
 ## Presentations of this material
 
