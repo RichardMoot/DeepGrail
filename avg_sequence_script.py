@@ -1,3 +1,5 @@
+#!/usr/local/bin/python3
+
 import numpy as np
 import tensorflow as tf
 import os, random
@@ -59,8 +61,8 @@ numPos1Classes = 30
 numPos2Classes = 32
 numSuperClasses = 891
 
-l1_value = 0.00003
-l2_value = 0.00003
+l1_value = 0.00005
+l2_value = 0.00005
 
 # input layers is the (averaged) ELMo output layer
 
@@ -79,13 +81,13 @@ X = Dropout(0.2)(X)
 
 Pos1 = TimeDistributed(Dense(32,kernel_constraint=max_norm(5.)))(X)
 Pos1 = TimeDistributed(Dropout(0.2))(Pos1)
-pos1_output = TimeDistributed(Dense(numPos1Classes, name='pos1_output', activation='softmax',kernel_constraint=max_norm(4.)))(Pos1)
+pos1_output = TimeDistributed(Dense(numPos1Classes, name='pos1_output', activation='softmax',kernel_regularizer=regularizers.l1_l2(l1_value,l2_value)))(Pos1)
 
 # Pos2 output
 
 Pos2 = TimeDistributed(Dense(32,kernel_constraint=max_norm(5.)))(X)
 Pos2 = TimeDistributed(Dropout(0.2))(Pos2)
-pos2_output = TimeDistributed(Dense(numPos2Classes, name='pos2_output', activation='softmax',kernel_constraint=max_norm(4.)))(Pos2)
+pos2_output = TimeDistributed(Dense(numPos2Classes, name='pos2_output', activation='softmax',kernel_regularizer=regularizers.l1_l2(l1_value,l2_value)))(Pos2)
 
 # second bi-directional LSTM layer
 
